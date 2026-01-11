@@ -1,0 +1,24 @@
+<Solution>
+    <Configurations>
+        <Platform Name="Any CPU" />
+    </Configurations>
+    <Folder Name="/src/">
+        <Project Path="src/Nexus.ServiceDesk.Domain/Nexus.ServiceDesk.Domain.csproj" />
+        <Project Path="src/Nexus.ServiceDesk.Application/Nexus.ServiceDesk.Application.csproj" />
+        <Project Path="src/Nexus.ServiceDesk.EntityFrameworkCore/Nexus.ServiceDesk.EntityFrameworkCore.csproj" />
+        <Project Path="src/Nexus.ServiceDesk.Web/Nexus.ServiceDesk.Web.csproj" />
+        <Project Path="src/Nexus.ServiceDesk.Domain.Shared/Nexus.ServiceDesk.Domain.Shared.csproj" />
+        <Project Path="src/Nexus.ServiceDesk.Application.Contracts/Nexus.ServiceDesk.Application.Contracts.csproj" />
+        <Project Path="src/Nexus.ServiceDesk.HttpApi/Nexus.ServiceDesk.HttpApi.csproj" />
+        <Project Path="src/Nexus.ServiceDesk.HttpApi.Client/Nexus.ServiceDesk.HttpApi.Client.csproj" />
+        <Project Path="src/Nexus.ServiceDesk.DbMigrator/Nexus.ServiceDesk.DbMigrator.csproj" />
+    </Folder>
+    <Folder Name="/test/">
+        <Project Path="test/Nexus.ServiceDesk.Application.Tests/Nexus.ServiceDesk.Application.Tests.csproj" />
+        <Project Path="test/Nexus.ServiceDesk.Web.Tests/Nexus.ServiceDesk.Web.Tests.csproj" />
+        <Project Path="test/Nexus.ServiceDesk.EntityFrameworkCore.Tests/Nexus.ServiceDesk.EntityFrameworkCore.Tests.csproj" />
+        <Project Path="test/Nexus.ServiceDesk.TestBase/Nexus.ServiceDesk.TestBase.csproj" />
+        <Project Path="test/Nexus.ServiceDesk.Domain.Tests/Nexus.ServiceDesk.Domain.Tests.csproj" />
+        <Project Path="test/Nexus.ServiceDesk.HttpApi.Client.ConsoleTestApp/Nexus.ServiceDesk.HttpApi.Client.ConsoleTestApp.csproj" />
+    </Folder>
+</Solution>

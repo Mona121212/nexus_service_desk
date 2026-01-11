@@ -1,0 +1,113 @@
+{
+  "template": "app",
+  "imports": {
+    "Volo.Abp.LeptonXLiteTheme": {
+      "version": "5.0.1",
+      "isInstalled": true,
+      "creationTime": "01/11/2026 04:10:21 +00:00"
+    },
+    "Volo.Abp.Account": {
+      "version": "10.0.1",
+      "isInstalled": true,
+      "creationTime": "01/11/2026 04:10:21 +00:00"
+    },
+    "Volo.Abp.OpenIddict": {
+      "version": "10.0.1",
+      "isInstalled": true,
+      "creationTime": "01/11/2026 04:10:21 +00:00"
+    },
+    "Volo.Abp.Identity": {
+      "version": "10.0.1",
+      "isInstalled": true,
+      "creationTime": "01/11/2026 04:10:21 +00:00"
+    },
+    "Volo.Abp.TenantManagement": {
+      "version": "10.0.1",
+      "isInstalled": true,
+      "creationTime": "01/11/2026 04:10:21 +00:00"
+    },
+    "Volo.Abp.SettingManagement": {
+      "version": "10.0.1",
+      "isInstalled": true,
+      "creationTime": "01/11/2026 04:10:21 +00:00"
+    },
+    "Volo.Abp.PermissionManagement": {
+      "version": "10.0.1",
+      "isInstalled": true,
+      "creationTime": "01/11/2026 04:10:21 +00:00"
+    },
+    "Volo.Abp.FeatureManagement": {
+      "version": "10.0.1",
+      "isInstalled": true,
+      "creationTime": "01/11/2026 04:10:21 +00:00"
+    }
+  },
+  "folders": {
+    "items": {
+      "src": {},
+      "test": {}
+    }
+  },
+  "packages": {
+    "Nexus.ServiceDesk.Application": {
+      "path": "src/Nexus.ServiceDesk.Application/Nexus.ServiceDesk.Application.abppkg",
+      "folder": "src"
+    },
+    "Nexus.ServiceDesk.Application.Tests": {
+      "path": "test/Nexus.ServiceDesk.Application.Tests/Nexus.ServiceDesk.Application.Tests.abppkg",
+      "folder": "test"
+    },
+    "Nexus.ServiceDesk.Domain.Shared": {
+      "path": "src/Nexus.ServiceDesk.Domain.Shared/Nexus.ServiceDesk.Domain.Shared.abppkg",
+      "folder": "src"
+    },
+    "Nexus.ServiceDesk.Application.Contracts": {
+      "path": "src/Nexus.ServiceDesk.Application.Contracts/Nexus.ServiceDesk.Application.Contracts.abppkg",
+      "folder": "src"
+    },
+    "Nexus.ServiceDesk.HttpApi": {
+      "path": "src/Nexus.ServiceDesk.HttpApi/Nexus.ServiceDesk.HttpApi.abppkg",
+      "folder": "src"
+    },
+    "Nexus.ServiceDesk.HttpApi.Client": {
+      "path": "src/Nexus.ServiceDesk.HttpApi.Client/Nexus.ServiceDesk.HttpApi.Client.abppkg",
+      "folder": "src"
+    },
+    "Nexus.ServiceDesk.Web": {
+      "path": "src/Nexus.ServiceDesk.Web/Nexus.ServiceDesk.Web.abppkg",
+      "folder": "src"
+    },
+    "Nexus.ServiceDesk.Web.Tests": {
+      "path": "test/Nexus.ServiceDesk.Web.Tests/Nexus.ServiceDesk.Web.Tests.abppkg",
+      "folder": "test"
+    },
+    "Nexus.ServiceDesk.EntityFrameworkCore.Tests": {
+      "path": "test/Nexus.ServiceDesk.EntityFrameworkCore.Tests/Nexus.ServiceDesk.EntityFrameworkCore.Tests.abppkg",
+      "folder": "test"
+    },
+    "Nexus.ServiceDesk.EntityFrameworkCore": {
+      "path": "src/Nexus.ServiceDesk.EntityFrameworkCore/Nexus.ServiceDesk.EntityFrameworkCore.abppkg",
+      "folder": "src"
+    },
+    "Nexus.ServiceDesk.TestBase": {
+      "path": "test/Nexus.ServiceDesk.TestBase/Nexus.ServiceDesk.TestBase.abppkg",
+      "folder": "test"
+    },
+    "Nexus.ServiceDesk.Domain.Tests": {
+      "path": "test/Nexus.ServiceDesk.Domain.Tests/Nexus.ServiceDesk.Domain.Tests.abppkg",
+      "folder": "test"
+    },
+    "Nexus.ServiceDesk.HttpApi.Client.ConsoleTestApp": {
+      "path": "test/Nexus.ServiceDesk.HttpApi.Client.ConsoleTestApp/Nexus.ServiceDesk.HttpApi.Client.ConsoleTestApp.abppkg",
+      "folder": "test"
+    },
+    "Nexus.ServiceDesk.DbMigrator": {
+      "path": "src/Nexus.ServiceDesk.DbMigrator/Nexus.ServiceDesk.DbMigrator.abppkg",
+      "folder": "src"
+    },
+    "Nexus.ServiceDesk.Domain": {
+      "path": "src/Nexus.ServiceDesk.Domain/Nexus.ServiceDesk.Domain.abppkg",
+      "folder": "src"
+    }
+  }
+}
