@@ -1,18 +1,24 @@
-// JavaScript source code
-
-const { createProxyMiddleware } = require('http-proxy-middleware');
+const { createProxyMiddleware } = require("http-proxy-middleware");
 
 module.exports = function (app) {
-    app.use(
-        '/dev-api', // Match all requests that start with /dev-api
-        createProxyMiddleware({
-            target: 'https://localhost:44338', // Backend server address
-            changeOrigin: true, // Enable cross-origin request proxying
-            secure: false,      // Important: set to false to allow self-signed HTTPS certificates on localhost
-            pathRewrite: {
-                '^/dev-api': '',  // Remove /dev-api prefix before forwarding the request to the backend
-            },
-        })
-    );
-};
+  app.use(
+    "/dev-api",
+    createProxyMiddleware({
+      target: "https://localhost:44338",
+      changeOrigin: true,
+      secure: false,
+      pathRewrite: {
+        "^/dev-api": "",
+      },
+      // Increase timeout to prevent 504 errors during debugging
+      proxyTimeout: 10000,
+      timeout: 10000,
 
+      onProxyReq: (proxyReq, req, res) => {
+        console.log(
+          `[Proxy] Forwarding: ${req.method} ${req.url} -> ${proxyReq.path}`
+        );
+      },
+    })
+  );
+};
