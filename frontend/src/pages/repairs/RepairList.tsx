@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { getMyRepairs, cancelRepair } from "../../api/repairs";
 import { RepairRequest } from "../../types/repair";
 import { Layout } from "../../components/Layout";
+import { useAuth } from "../../hooks/useAuth";
 import "./RepairList.css";
 
 export const RepairList: React.FC = () => {
@@ -10,10 +11,18 @@ export const RepairList: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
+  const { getUserRole } = useAuth();
 
   useEffect(() => {
+    // Check if user is Electrician, redirect to electrician page
+    const userRole = getUserRole();
+    if (userRole === "Electrician") {
+      navigate("/electrician/repairs", { replace: true });
+      return;
+    }
+
     fetchRepairs();
-  }, []);
+  }, [navigate, getUserRole]);
 
   const fetchRepairs = async () => {
     setLoading(true);

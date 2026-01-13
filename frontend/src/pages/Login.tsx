@@ -7,7 +7,7 @@ export const Login: React.FC = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
-  const { login, isLoading, error } = useAuth();
+  const { login, isLoading, error, getUserRole } = useAuth();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -15,7 +15,19 @@ export const Login: React.FC = () => {
     if (success) {
       // Store username in localStorage for Header to display
       localStorage.setItem("username", username);
-      navigate("/dashboard");
+
+      // Get user role from token and redirect accordingly
+      const userRole = getUserRole();
+
+      // Redirect based on user role
+      if (userRole === "Electrician") {
+        navigate("/electrician/repairs");
+      } else if (userRole === "Teacher") {
+        navigate("/repairs");
+      } else {
+        // Default to dashboard for Admin or other roles
+        navigate("/dashboard");
+      }
     }
   };
 

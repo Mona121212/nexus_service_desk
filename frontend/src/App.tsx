@@ -8,6 +8,8 @@ import { RepairList } from './pages/repairs/RepairList';
 import { RepairCreate } from './pages/repairs/RepairCreate';
 import { RepairDetail } from './pages/repairs/RepairDetail';
 import { RepairEdit } from './pages/repairs/RepairEdit';
+import { ElectricianList } from './pages/electrician/ElectricianList';
+import { ElectricianQuote } from './pages/electrician/ElectricianQuote';
 import './App.css';
 
 function App() {
@@ -53,6 +55,22 @@ function App() {
           element={
             <ProtectedRoute>
               <RepairEdit />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/electrician/repairs"
+          element={
+            <ProtectedRoute>
+              <ElectricianList />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/electrician/repairs/:id/quote"
+          element={
+            <ProtectedRoute>
+              <ElectricianQuote />
             </ProtectedRoute>
           }
         />

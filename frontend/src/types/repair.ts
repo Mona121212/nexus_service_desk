@@ -11,7 +11,9 @@ export interface RepairRequest {
   creationTime?: string; // ISO format timestamp - ABP audit field
   createdTime?: string; // ISO format timestamp - legacy field name
   teacherId?: string;
-  electricianQuote?: number; // Quote amount
+  electricianQuote?: number; // Quote amount (QuotedAmount from backend)
+  electricianNote?: string; // Electrician note
+  requestNo?: string; // Request number
   adminNote?: string;
   cancelledReason?: string; // Cancellation reason
   cancelledAt?: string; // ISO format timestamp when cancelled

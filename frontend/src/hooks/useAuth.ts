@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { login as loginApi } from '../api/auth';
+import { getUserRolesFromToken } from '../api/user';
 
 export const useAuth = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -37,6 +38,7 @@ export const useAuth = () => {
 
   const logout = (): void => {
     localStorage.removeItem('access_token');
+    localStorage.removeItem('username');
   };
 
   const isLoggedIn = (): boolean => {
@@ -47,11 +49,23 @@ export const useAuth = () => {
     return localStorage.getItem('access_token');
   };
 
+  const getUserRoles = (): string[] => {
+    return getUserRolesFromToken();
+  };
+
+  const getUserRole = (): string | null => {
+    const roles = getUserRolesFromToken();
+    // Return the first role, or null if no roles
+    return roles.length > 0 ? roles[0] : null;
+  };
+
   return {
     login,
     logout,
     isLoggedIn,
     getToken,
+    getUserRoles,
+    getUserRole,
     isLoading,
     error,
   };
