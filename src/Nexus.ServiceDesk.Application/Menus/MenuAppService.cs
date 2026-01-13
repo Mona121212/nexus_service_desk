@@ -15,6 +15,8 @@ public class MenuAppService : ServiceDeskAppService, IMenuAppService
     private readonly IRepository<AppMenu, Guid> _menuRepository;
     private readonly IRepository<AppRoleMenu> _roleMenuRepository;
     private readonly IIdentityUserRepository _userRepository;
+    // Define the Mapper instance inside the class
+    private static readonly ServiceDeskApplicationMappers _myMapper = new();
 
     public MenuAppService(
         IRepository<AppMenu, Guid> menuRepository,
@@ -35,6 +37,11 @@ public class MenuAppService : ServiceDeskAppService, IMenuAppService
 
         // Get user roles
         var user = await _userRepository.GetAsync(CurrentUser.Id.Value);
+        // Check if Roles is null or empty
+        if (user.Roles == null || !user.Roles.Any())
+        {
+            return new GetMyMenusDto { Menus = new List<AppMenuDto>() };
+        }
         var roleIds = user.Roles.Select(r => r.RoleId).ToList();
 
         if (roleIds.Count == 0)
@@ -53,7 +60,7 @@ public class MenuAppService : ServiceDeskAppService, IMenuAppService
 
         // Get enabled menus
         var menus = await _menuRepository.GetListAsync(x => menuIds.Contains(x.Id) && x.IsEnabled);
-        var menuDtos = ObjectMapper.Map<List<AppMenu>, List<AppMenuDto>>(menus);
+        var menuDtos = menus.Select(m => _myMapper.Map(m)).ToList();
 
         // Build tree structure
         var rootMenus = menuDtos.Where(x => x.ParentId == null || !menuIds.Contains(x.ParentId.Value))

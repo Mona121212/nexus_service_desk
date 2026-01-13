@@ -16,6 +16,8 @@ namespace Nexus.ServiceDesk.RepairRequests;
 public class ElectricianRepairRequestAppService : ServiceDeskAppService, IElectricianRepairRequestAppService
 {
     private readonly IRepository<RepairRequest, Guid> _repairRequestRepository;
+    // Define the Mapper instance inside the class
+    private static readonly ServiceDeskApplicationMappers _myMapper = new();
 
     public ElectricianRepairRequestAppService(
         IRepository<RepairRequest, Guid> repairRequestRepository)
@@ -61,7 +63,7 @@ public class ElectricianRepairRequestAppService : ServiceDeskAppService, IElectr
 
         return new PagedResultDto<RepairRequestListDto>(
             totalCount,
-            ObjectMapper.Map<List<RepairRequest>, List<RepairRequestListDto>>(entities)
+            entities.Select(e => _myMapper.MapToList(e)).ToList()
         );
     }
 
