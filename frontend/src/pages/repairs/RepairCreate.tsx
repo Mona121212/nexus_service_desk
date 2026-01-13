@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { createRepair } from '../../api/repairs';
+import { Layout } from '../../components/Layout';
 import './RepairCreate.css';
 
 export const RepairCreate: React.FC = () => {
@@ -46,9 +47,10 @@ export const RepairCreate: React.FC = () => {
     };
 
     return (
-        <div className="repair-create">
-            <h1>Create Repair Request</h1>
-            <form onSubmit={handleSubmit} className="repair-form">
+        <Layout>
+            <div className="repair-create">
+                <h1>Create Repair Request</h1>
+                <form onSubmit={handleSubmit} className="repair-form">
                 <div className="form-group">
                     <label htmlFor="title">Title *</label>
                     <input
@@ -118,5 +120,6 @@ export const RepairCreate: React.FC = () => {
                 </div>
             </form>
         </div>
+        </Layout>
     );
 };
