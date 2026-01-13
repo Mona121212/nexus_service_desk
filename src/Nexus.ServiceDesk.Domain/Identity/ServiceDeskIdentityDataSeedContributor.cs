@@ -46,7 +46,8 @@ public class ServiceDeskIdentityDataSeedContributor : IDataSeedContributor, ITra
                 ServiceDeskPermissions.RepairRequestsCreate,
                 ServiceDeskPermissions.RepairRequestsUpdate,
                 ServiceDeskPermissions.RepairRequestsCancel,
-                ServiceDeskPermissions.RepairRequestsMyList
+                ServiceDeskPermissions.RepairRequestsMyList,
+                ServiceDeskPermissions.RepairRequestsDetail
             });
         }
 
