@@ -22,7 +22,7 @@ export const RepairList: React.FC = () => {
     }
 
     fetchRepairs();
-  }, [navigate, getUserRole]);
+  }, []);
 
   const fetchRepairs = async () => {
     setLoading(true);
