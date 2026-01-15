@@ -21,6 +21,20 @@ export const ElectricianQuote: React.FC = () => {
     }
   }, [id]);
 
+  // Convert approvalStatus number to text (0 = Pending, 1 = Approved, 2 = Rejected)
+  const getApprovalStatusText = (status: string | number | undefined): string => {
+    if (status === undefined || status === null) return 'Pending';
+    if (typeof status === 'number') {
+      switch (status) {
+        case 0: return 'Pending';
+        case 1: return 'Approved';
+        case 2: return 'Rejected';
+        default: return 'Pending';
+      }
+    }
+    return String(status);
+  };
+
   const fetchRepairDetail = async () => {
     if (!id) return;
     setFetching(true);
@@ -182,11 +196,11 @@ export const ElectricianQuote: React.FC = () => {
                 <label>Status</label>
                 <div>
                   <span
-                    className={`status-badge status-${(
-                      repair.approvalStatus || 'Pending'
+                    className={`status-badge status-${String(
+                      repair.approvalStatus ?? 'Pending'
                     ).toLowerCase()}`}
                   >
-                    {repair.approvalStatus || 'Pending'}
+                    {getApprovalStatusText(repair.approvalStatus)}
                   </span>
                 </div>
               </div>

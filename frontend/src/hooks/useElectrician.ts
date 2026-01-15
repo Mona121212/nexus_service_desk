@@ -8,6 +8,13 @@ import {
   QuoteRequest,
 } from '../api/electrician';
 
+// Helper function to check if approvalStatus is Pending (handles both number 0 and string 'Pending')
+const isPending = (status: string | number | undefined): boolean => {
+  if (status === undefined || status === null) return true;
+  if (typeof status === 'number') return status === 0;
+  return String(status).toLowerCase() === 'pending';
+};
+
 export const useElectrician = () => {
   const [waitingRepairs, setWaitingRepairs] = useState<RepairRequest[]>([]);
   const [processedRepairs, setProcessedRepairs] = useState<RepairRequest[]>([]);
@@ -26,10 +33,10 @@ export const useElectrician = () => {
 
       // Separate into waiting (no quote) and processed (has quote)
       const waiting = allRepairs.filter(
-        (repair) => !repair.electricianQuote && repair.approvalStatus === 'Pending'
+        (repair) => !repair.electricianQuote && isPending(repair.approvalStatus)
       );
       const processed = allRepairs.filter(
-        (repair) => repair.electricianQuote != null && repair.approvalStatus === 'Pending'
+        (repair) => repair.electricianQuote != null && isPending(repair.approvalStatus)
       );
 
       setWaitingRepairs(waiting);
@@ -53,7 +60,7 @@ export const useElectrician = () => {
       const response = await getElectricianRepairList(1, 1000);
       const allRepairs = response.items || [];
       const waiting = allRepairs.filter(
-        (repair) => !repair.electricianQuote && repair.approvalStatus === 'Pending'
+        (repair) => !repair.electricianQuote && isPending(repair.approvalStatus)
       );
       setWaitingRepairs(waiting);
     } catch (err) {
@@ -75,7 +82,7 @@ export const useElectrician = () => {
       const response = await getElectricianRepairList(1, 1000);
       const allRepairs = response.items || [];
       const processed = allRepairs.filter(
-        (repair) => repair.electricianQuote != null && repair.approvalStatus === 'Pending'
+        (repair) => repair.electricianQuote != null && isPending(repair.approvalStatus)
       );
       setProcessedRepairs(processed);
     } catch (err) {

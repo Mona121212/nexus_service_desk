@@ -100,7 +100,16 @@
 }
 
 .btn-link.btn-primary {
-  color: #1890ff;
+  background-color: #1890ff;
+  color: white;
+  border-radius: 4px;
+  text-decoration: none;
+  padding: 6px 12px;
+}
+
+.btn-link.btn-primary:hover {
+  background-color: #40a9ff;
+  color: white;
 }
 
 .btn-link.btn-danger {
