@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using System.Linq;
 using Nexus.ServiceDesk.RepairRequests;
 using Nexus.ServiceDesk.RepairRequests.DTOs;
 using Nexus.ServiceDesk.AppMenus;
@@ -18,4 +20,21 @@ public partial class ServiceDeskApplicationMappers
 
     // Menu mapping
     public partial AppMenuDto Map(AppMenu source);
+
+    // Manual implementation for List mappings to support ObjectMapper.Map<List<TSource>, List<TDestination>>
+    // Mapperly doesn't auto-generate List mappings, so we implement them manually
+    public List<RepairRequestDetailDto> Map(List<RepairRequest> source)
+    {
+        return source.Select(m => Map(m)).ToList();
+    }
+
+    public List<RepairRequestListDto> MapToList(List<RepairRequest> source)
+    {
+        return source.Select(m => MapToList(m)).ToList();
+    }
+
+    public List<AppMenuDto> Map(List<AppMenu> source)
+    {
+        return source.Select(m => Map(m)).ToList();
+    }
 }
