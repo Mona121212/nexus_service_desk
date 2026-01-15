@@ -4,6 +4,16 @@ const http = axios.create({
   baseURL: process.env.REACT_APP_API_BASE_URL || '/dev-api',
 });
 
+// Helper function to get cookie value by name
+const getCookie = (name: string): string | null => {
+  const value = `; ${document.cookie}`;
+  const parts = value.split(`; ${name}=`);
+  if (parts.length === 2) {
+    return parts.pop()?.split(';').shift() || null;
+  }
+  return null;
+};
+
 http.interceptors.request.use(
     (config) => {
         const token = localStorage.getItem('access_token');
@@ -12,6 +22,17 @@ http.interceptors.request.use(
         if (token && !config.url?.includes('/connect/token')) {
             config.headers.Authorization = `Bearer ${token}`;
         }
+
+        // Add AntiForgeryToken for POST, PUT, DELETE, PATCH requests
+        // ABP framework uses XSRF-TOKEN cookie name
+        const method = config.method?.toUpperCase();
+        if (method && ['POST', 'PUT', 'DELETE', 'PATCH'].includes(method)) {
+            const xsrfToken = getCookie('XSRF-TOKEN');
+            if (xsrfToken) {
+                config.headers['RequestVerificationToken'] = xsrfToken;
+            }
+        }
+
         return config;
     },
     (error) => {
