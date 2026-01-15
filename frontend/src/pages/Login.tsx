@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
+import { getMyMenus } from "../api/menus";
 import "./Login.css";
 
 export const Login: React.FC = () => {
@@ -15,6 +16,15 @@ export const Login: React.FC = () => {
     if (success) {
       // Store username in localStorage for Header to display
       localStorage.setItem("username", username);
+
+      try {
+        // Call a GET API to trigger server to set fresh XSRF-TOKEN cookie
+        // This ensures the AntiForgeryToken matches the current authenticated user
+        await getMyMenus();
+      } catch (error) {
+        // Ignore menu fetch errors, we just need to trigger the cookie refresh
+        console.warn('Menu fetch failed, but continuing with login:', error);
+      }
 
       // Get user role from token and redirect accordingly
       const userRole = getUserRole();

@@ -2,6 +2,7 @@
 
 const http = axios.create({
   baseURL: process.env.REACT_APP_API_BASE_URL || '/dev-api',
+  withCredentials: true, // Enable cookies (including XSRF-TOKEN) to be sent/received
 });
 
 // Helper function to get cookie value by name
