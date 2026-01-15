@@ -16,6 +16,8 @@ namespace Nexus.ServiceDesk.RepairRequests;
 public class ElectricianRepairRequestAppService : ServiceDeskAppService, IElectricianRepairRequestAppService
 {
     private readonly IRepository<RepairRequest, Guid> _repairRequestRepository;
+    // Use Mapperly mapper instance directly to ensure mapping works correctly
+    private static readonly ServiceDeskApplicationMappers _myMapper = new();
 
     public ElectricianRepairRequestAppService(
         IRepository<RepairRequest, Guid> repairRequestRepository)
@@ -94,6 +96,7 @@ public class ElectricianRepairRequestAppService : ServiceDeskAppService, IElectr
 
         await _repairRequestRepository.UpdateAsync(repairRequest);
 
-        return ObjectMapper.Map<RepairRequest, RepairRequestDetailDto>(repairRequest);
+        // Use Mapperly mapper directly to ensure mapping works correctly
+        return _myMapper.Map(repairRequest);
     }
 }
