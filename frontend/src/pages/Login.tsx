@@ -28,16 +28,22 @@ export const Login: React.FC = () => {
 
       // Get user role from token and redirect accordingly
       const userRole = getUserRole();
+      console.log('Login successful, user role:', userRole);
 
       // Redirect based on user role
       if (userRole === "Electrician") {
-        navigate("/electrician/repairs");
+        console.log('Redirecting to /electrician/repairs');
+        navigate("/electrician/repairs", { replace: true });
       } else if (userRole === "Teacher") {
-        navigate("/repairs");
+        console.log('Redirecting to /repairs');
+        navigate("/repairs", { replace: true });
       } else {
         // Default to dashboard for Admin or other roles
-        navigate("/dashboard");
+        console.log('Redirecting to /dashboard');
+        navigate("/dashboard", { replace: true });
       }
+    } else {
+      console.error('Login failed');
     }
   };
 

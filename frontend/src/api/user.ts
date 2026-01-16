@@ -3,6 +3,17 @@ import { User } from '../types/common';
 import axios from 'axios';
 
 /**
+ * ApplicationConfiguration interface from ABP
+ */
+export interface ApplicationConfiguration {
+  auth: {
+    grantedPolicies?: Record<string, boolean>;
+    grantedPermissions?: Record<string, boolean>;
+  };
+  [key: string]: any;
+}
+
+/**
  * Get current user profile information
  */
 export const getCurrentUser = async (): Promise<User> => {
@@ -57,5 +68,24 @@ export const getUserRolesFromToken = (): string[] => {
   } catch (error) {
     console.error('Error decoding token:', error);
     return [];
+  }
+};
+
+/**
+ * Get ApplicationConfiguration from ABP backend
+ * This includes user permissions in auth.grantedPermissions
+ */
+export const getApplicationConfiguration = async (): Promise<ApplicationConfiguration> => {
+  try {
+    const response = await http.get<ApplicationConfiguration>('/api/abp/application-configuration');
+    return response.data;
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      const message = error.response?.data?.error?.message 
+        || error.message 
+        || 'Failed to fetch application configuration';
+      throw new Error(message);
+    }
+    throw error;
   }
 };
