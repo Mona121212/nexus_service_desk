@@ -18,6 +18,8 @@ public class AdminMenuAppService : ServiceDeskAppService, IAdminMenuAppService
 {
     private readonly IRepository<AppMenu, Guid> _menuRepository;
     private readonly IGuidGenerator _guidGenerator;
+    // Use direct mapper instance instead of ABP ObjectMapper
+    private static readonly ServiceDeskApplicationMappers _myMapper = new();
 
     public AdminMenuAppService(
         IRepository<AppMenu, Guid> menuRepository,
@@ -31,7 +33,8 @@ public class AdminMenuAppService : ServiceDeskAppService, IAdminMenuAppService
     public async Task<List<AppMenuDto>> GetListAsync()
     {
         var menus = await _menuRepository.GetListAsync();
-        return ObjectMapper.Map<List<AppMenu>, List<AppMenuDto>>(menus);
+        // Use direct mapper instance instead of ABP ObjectMapper
+        return menus.Select(menu => _myMapper.Map(menu)).ToList();
     }
 
     [Authorize(ServiceDeskPermissions.MenusManage)]
@@ -52,7 +55,7 @@ public class AdminMenuAppService : ServiceDeskAppService, IAdminMenuAppService
 
         await _menuRepository.InsertAsync(menu);
 
-        return ObjectMapper.Map<AppMenu, AppMenuDto>(menu);
+        return _myMapper.Map(menu);
     }
 
     [Authorize(ServiceDeskPermissions.MenusManage)]
@@ -69,7 +72,7 @@ public class AdminMenuAppService : ServiceDeskAppService, IAdminMenuAppService
 
         await _menuRepository.UpdateAsync(menu);
 
-        return ObjectMapper.Map<AppMenu, AppMenuDto>(menu);
+        return _myMapper.Map(menu);
     }
 
     [Authorize(ServiceDeskPermissions.MenusManage)]

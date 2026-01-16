@@ -17,6 +17,8 @@ public class AdminRoleMenuAppService : ServiceDeskAppService, IAdminRoleMenuAppS
 {
     private readonly IRepository<AppRoleMenu> _roleMenuRepository;
     private readonly IRepository<AppMenu, Guid> _menuRepository;
+    // Use direct mapper instance instead of ABP ObjectMapper
+    private static readonly ServiceDeskApplicationMappers _myMapper = new();
 
     public AdminRoleMenuAppService(
         IRepository<AppRoleMenu> roleMenuRepository,
@@ -38,7 +40,8 @@ public class AdminRoleMenuAppService : ServiceDeskAppService, IAdminRoleMenuAppS
         }
 
         var menus = await _menuRepository.GetListAsync(x => menuIds.Contains(x.Id) && x.IsEnabled);
-        var menuDtos = ObjectMapper.Map<List<AppMenu>, List<AppMenuDto>>(menus);
+        // Use direct mapper instance instead of ABP ObjectMapper
+        var menuDtos = menus.Select(m => _myMapper.Map(m)).ToList();
 
         // Build tree structure
         var rootMenus = menuDtos.Where(x => x.ParentId == null || !menuIds.Contains(x.ParentId.Value))

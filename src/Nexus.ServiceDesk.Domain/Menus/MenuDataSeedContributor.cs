@@ -60,6 +60,35 @@ public class MenuDataSeedContributor : IDataSeedContributor, ITransientDependenc
             sortOrder: 1
         );
 
+        // Create Admin menus
+        var adminAllRepairsMenu = await CreateMenuIfNotExistsAsync(
+            "ADMIN_ALL_REPAIRS",
+            "All Repairs",
+            "/admin/repairs",
+            sortOrder: 1
+        );
+
+        var adminApprovalsMenu = await CreateMenuIfNotExistsAsync(
+            "ADMIN_APPROVALS",
+            "Approval Management",
+            "/admin/approvals",
+            sortOrder: 2
+        );
+
+        var adminMenuManagementMenu = await CreateMenuIfNotExistsAsync(
+            "ADMIN_MENU_MANAGEMENT",
+            "Menu Management",
+            "/admin/menus",
+            sortOrder: 3
+        );
+
+        var adminRoleMenuAssignmentMenu = await CreateMenuIfNotExistsAsync(
+            "ADMIN_ROLE_MENU_ASSIGNMENT",
+            "Role Menu Assignment",
+            "/admin/role-menus",
+            sortOrder: 4
+        );
+
         // Assign menus to roles
         var teacherRole = await _roleRepository.FindByNormalizedNameAsync("TEACHER");
         if (teacherRole != null)
@@ -72,6 +101,15 @@ public class MenuDataSeedContributor : IDataSeedContributor, ITransientDependenc
         if (electricianRole != null)
         {
             await AssignMenuToRoleIfNotExistsAsync(electricianRole.Id, electricianPendingRepairsMenu.Id);
+        }
+
+        var adminRole = await _roleRepository.FindByNormalizedNameAsync("ADMIN");
+        if (adminRole != null)
+        {
+            await AssignMenuToRoleIfNotExistsAsync(adminRole.Id, adminAllRepairsMenu.Id);
+            await AssignMenuToRoleIfNotExistsAsync(adminRole.Id, adminApprovalsMenu.Id);
+            await AssignMenuToRoleIfNotExistsAsync(adminRole.Id, adminMenuManagementMenu.Id);
+            await AssignMenuToRoleIfNotExistsAsync(adminRole.Id, adminRoleMenuAssignmentMenu.Id);
         }
     }
 
