@@ -1,10 +1,33 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { useMenus } from "../hooks/useMenus";
+import { getMyMenus } from "../api/menus";
+import { Menu } from "../types/menu";
 import "./Sidebar.css";
 
 export const Sidebar: React.FC = () => {
-  const { menus, loading, error } = useMenus();
+  const [menus, setMenus] = useState<Menu[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    fetchMenus();
+  }, []);
+
+  const fetchMenus = async (): Promise<void> => {
+    setLoading(true);
+    setError(null);
+    
+    try {
+      // All users (including Admin) use my-menus API to get their role-based menus
+      // The my-menus API returns menus based on user's role-menu associations
+      const data = await getMyMenus();
+      setMenus(data);
+      setLoading(false);
+    } catch (err) {
+      setLoading(false);
+      setError(err instanceof Error ? err.message : 'Failed to fetch menus');
+    }
+  };
 
   const renderMenuItems = (menuList: typeof menus) => {
     return menuList.map((menu) => (

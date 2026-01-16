@@ -10,6 +10,10 @@ import { RepairDetail } from './pages/repairs/RepairDetail';
 import { RepairEdit } from './pages/repairs/RepairEdit';
 import { ElectricianList } from './pages/electrician/ElectricianList';
 import { ElectricianQuote } from './pages/electrician/ElectricianQuote';
+import { AdminApprovals } from './pages/admin/AdminApprovals';
+import { AdminMenus } from './pages/admin/AdminMenus';
+import { AdminRoleMenus } from './pages/admin/AdminRoleMenus';
+import { AdminRepairs } from './pages/admin/AdminRepairs';
 import './App.css';
 
 function App() {
@@ -71,6 +75,38 @@ function App() {
           element={
             <ProtectedRoute>
               <ElectricianQuote />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/repairs"
+          element={
+            <ProtectedRoute>
+              <AdminRepairs />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/approvals"
+          element={
+            <ProtectedRoute>
+              <AdminApprovals />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/menus"
+          element={
+            <ProtectedRoute>
+              <AdminMenus />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/role-menus"
+          element={
+            <ProtectedRoute>
+              <AdminRoleMenus />
             </ProtectedRoute>
           }
         />
