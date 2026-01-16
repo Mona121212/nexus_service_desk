@@ -16,6 +16,8 @@ namespace Nexus.ServiceDesk.RepairRequests;
 public class AdminRepairRequestAppService : ServiceDeskAppService, IAdminRepairRequestAppService
 {
     private readonly IRepository<RepairRequest, Guid> _repairRequestRepository;
+    // Use direct mapper instance instead of ABP ObjectMapper
+    private static readonly ServiceDeskApplicationMappers _myMapper = new();
 
     public AdminRepairRequestAppService(
         IRepository<RepairRequest, Guid> repairRequestRepository)
@@ -70,7 +72,7 @@ public class AdminRepairRequestAppService : ServiceDeskAppService, IAdminRepairR
 
         return new PagedResultDto<RepairRequestListDto>(
             totalCount,
-            ObjectMapper.Map<List<RepairRequest>, List<RepairRequestListDto>>(entities)
+            entities.Select(e => _myMapper.MapToList(e)).ToList()
         );
     }
 
@@ -115,7 +117,7 @@ public class AdminRepairRequestAppService : ServiceDeskAppService, IAdminRepairR
 
         return new PagedResultDto<RepairRequestListDto>(
             totalCount,
-            ObjectMapper.Map<List<RepairRequest>, List<RepairRequestListDto>>(entities)
+            entities.Select(e => _myMapper.MapToList(e)).ToList()
         );
     }
 
@@ -147,7 +149,8 @@ public class AdminRepairRequestAppService : ServiceDeskAppService, IAdminRepairR
 
         await _repairRequestRepository.UpdateAsync(repairRequest);
 
-        return ObjectMapper.Map<RepairRequest, RepairRequestDetailDto>(repairRequest);
+        // Use direct mapper instance instead of ABP ObjectMapper
+        return _myMapper.Map(repairRequest);
     }
 
     [Authorize(ServiceDeskPermissions.RepairRequestsReject)]
@@ -178,6 +181,7 @@ public class AdminRepairRequestAppService : ServiceDeskAppService, IAdminRepairR
 
         await _repairRequestRepository.UpdateAsync(repairRequest);
 
-        return ObjectMapper.Map<RepairRequest, RepairRequestDetailDto>(repairRequest);
+        // Use direct mapper instance instead of ABP ObjectMapper
+        return _myMapper.Map(repairRequest);
     }
 }
