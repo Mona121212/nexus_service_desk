@@ -68,11 +68,16 @@ public class ServiceDeskIdentityDataSeedContributor : IDataSeedContributor, ITra
         {
             await GrantPermissionsToRoleAsync(adminRole.Name!, new[]
             {
-                ServiceDeskPermissions.RepairRequestsAdminList,
-                ServiceDeskPermissions.RepairRequestsApprove,
-                ServiceDeskPermissions.RepairRequestsReject,
-                ServiceDeskPermissions.MenusManage,
-                ServiceDeskPermissions.RoleMenusManage
+                // Repair Request Admin APIs
+                ServiceDeskPermissions.RepairRequestsAdminList,  // GET /api/app/admin-repair-request
+                ServiceDeskPermissions.RepairRequestsApprove,    // GET /api/app/admin-repair-request/approvals, POST /api/app/admin-repair-request/{id}/approve
+                ServiceDeskPermissions.RepairRequestsReject,    // POST /api/app/admin-repair-request/{id}/reject
+                
+                // Menu Management APIs
+                ServiceDeskPermissions.MenusManage,             // GET, POST, PUT, DELETE /api/app/admin-menu
+                
+                // Role Menu Assignment APIs
+                ServiceDeskPermissions.RoleMenusManage            // GET /api/app/admin-role-menu/by-role/{roleId}, POST /api/app/admin-role-menu/save
             });
         }
     }

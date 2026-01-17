@@ -89,6 +89,20 @@ public class MenuDataSeedContributor : IDataSeedContributor, ITransientDependenc
             sortOrder: 4
         );
 
+        var adminUserManagementMenu = await CreateMenuIfNotExistsAsync(
+            "ADMIN_USER_MANAGEMENT",
+            "User Management",
+            "/admin/users",
+            sortOrder: 5
+        );
+
+        var adminRoleManagementMenu = await CreateMenuIfNotExistsAsync(
+            "ADMIN_ROLE_MANAGEMENT",
+            "Role Management",
+            "/admin/roles",
+            sortOrder: 6
+        );
+
         // Assign menus to roles
         var teacherRole = await _roleRepository.FindByNormalizedNameAsync("TEACHER");
         if (teacherRole != null)
@@ -106,10 +120,17 @@ public class MenuDataSeedContributor : IDataSeedContributor, ITransientDependenc
         var adminRole = await _roleRepository.FindByNormalizedNameAsync("ADMIN");
         if (adminRole != null)
         {
-            await AssignMenuToRoleIfNotExistsAsync(adminRole.Id, adminAllRepairsMenu.Id);
-            await AssignMenuToRoleIfNotExistsAsync(adminRole.Id, adminApprovalsMenu.Id);
-            await AssignMenuToRoleIfNotExistsAsync(adminRole.Id, adminMenuManagementMenu.Id);
-            await AssignMenuToRoleIfNotExistsAsync(adminRole.Id, adminRoleMenuAssignmentMenu.Id);
+            // Repair Request Management
+            await AssignMenuToRoleIfNotExistsAsync(adminRole.Id, adminAllRepairsMenu.Id);           // /admin/repairs - RepairRequestsAdminList
+            await AssignMenuToRoleIfNotExistsAsync(adminRole.Id, adminApprovalsMenu.Id);             // /admin/approvals - RepairRequestsApprove
+
+            // Menu Management
+            await AssignMenuToRoleIfNotExistsAsync(adminRole.Id, adminMenuManagementMenu.Id);         // /admin/menus - MenusManage
+            await AssignMenuToRoleIfNotExistsAsync(adminRole.Id, adminRoleMenuAssignmentMenu.Id);    // /admin/role-menus - RoleMenusManage
+
+            // User and Role Management (ABP Identity APIs - no custom permissions needed, uses ABP default permissions)
+            await AssignMenuToRoleIfNotExistsAsync(adminRole.Id, adminUserManagementMenu.Id);        // /admin/users - Uses ABP Identity.Users permissions
+            await AssignMenuToRoleIfNotExistsAsync(adminRole.Id, adminRoleManagementMenu.Id);        // /admin/roles - Uses ABP Identity.Roles permissions
         }
     }
 
