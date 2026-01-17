@@ -49,6 +49,13 @@ export const AdminRoleMenus: React.FC = () => {
   const fetchRoles = async () => {
     try {
       const data = await getAllRoles();
+      // Ensure data is an array before filtering
+      if (!Array.isArray(data)) {
+        console.error('getAllRoles returned non-array data:', data);
+        setError('Invalid response format: expected array');
+        setRoles([]);
+        return;
+      }
       // Filter to show only Teacher, Electrician, Admin roles
       const filteredRoles = data.filter(
         (role) =>

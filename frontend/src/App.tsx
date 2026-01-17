@@ -1,20 +1,22 @@
-﻿import React from 'react';
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import { Login } from './pages/Login';
-import { Dashboard } from './pages/Dashboard';
-import { NotFound } from './pages/NotFound';
-import { ProtectedRoute } from './components/ProtectedRoute';
-import { RepairList } from './pages/repairs/RepairList';
-import { RepairCreate } from './pages/repairs/RepairCreate';
-import { RepairDetail } from './pages/repairs/RepairDetail';
-import { RepairEdit } from './pages/repairs/RepairEdit';
-import { ElectricianList } from './pages/electrician/ElectricianList';
-import { ElectricianQuote } from './pages/electrician/ElectricianQuote';
-import { AdminApprovals } from './pages/admin/AdminApprovals';
-import { AdminMenus } from './pages/admin/AdminMenus';
-import { AdminRoleMenus } from './pages/admin/AdminRoleMenus';
-import { AdminRepairs } from './pages/admin/AdminRepairs';
-import './App.css';
+﻿import React from "react";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { Login } from "./pages/Login";
+import { Dashboard } from "./pages/Dashboard";
+import { NotFound } from "./pages/NotFound";
+import { ProtectedRoute } from "./components/ProtectedRoute";
+import { RepairList } from "./pages/repairs/RepairList";
+import { RepairCreate } from "./pages/repairs/RepairCreate";
+import { RepairDetail } from "./pages/repairs/RepairDetail";
+import { RepairEdit } from "./pages/repairs/RepairEdit";
+import { ElectricianList } from "./pages/electrician/ElectricianList";
+import { ElectricianQuote } from "./pages/electrician/ElectricianQuote";
+import { AdminApprovals } from "./pages/admin/AdminApprovals";
+import { AdminMenus } from "./pages/admin/AdminMenus";
+import { AdminRoleMenus } from "./pages/admin/AdminRoleMenus";
+import { AdminRepairs } from "./pages/admin/AdminRepairs";
+import { AdminUsers } from "./pages/admin/AdminUsers";
+import { AdminRoles } from "./pages/admin/AdminRoles";
+import "./App.css";
 
 function App() {
   return (
@@ -107,6 +109,22 @@ function App() {
           element={
             <ProtectedRoute>
               <AdminRoleMenus />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/users"
+          element={
+            <ProtectedRoute>
+              <AdminUsers />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/roles"
+          element={
+            <ProtectedRoute>
+              <AdminRoles />
             </ProtectedRoute>
           }
         />
