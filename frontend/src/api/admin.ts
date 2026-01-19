@@ -309,7 +309,7 @@ export const getUsers = async (
   input?: GetIdentityUsersInput
 ): Promise<PagedResult<IdentityUserDto>> => {
   try {
-    const response = await http.get<PagedResult<IdentityUserDto>>(
+    const response = await http.get<any>(
       '/api/identity/users',
       {
         params: {
@@ -320,7 +320,26 @@ export const getUsers = async (
         },
       }
     );
-    return response.data;
+    const data = response.data;
+
+    // Ensure items array exists and normalize roles field for each user
+    if (data && data.items && Array.isArray(data.items)) {
+      data.items = data.items.map((user: any) => {
+        // Normalize roles field - ensure it's always an array or undefined
+        if (user.roles !== undefined && user.roles !== null) {
+          if (Array.isArray(user.roles)) {
+            // Already an array, keep it
+            return user;
+          } else {
+            // Not an array, set to undefined
+            user.roles = undefined;
+          }
+        }
+        return user;
+      });
+    }
+
+    return data;
   } catch (error) {
     if (axios.isAxiosError(error)) {
       const message =
@@ -426,10 +445,26 @@ export const deleteUser = async (id: string): Promise<void> => {
  */
 export const getUserRoles = async (id: string): Promise<IdentityRoleDto[]> => {
   try {
-    const response = await http.get<IdentityRoleDto[]>(
+    const response = await http.get<any>(
       `/api/identity/users/${id}/roles`
     );
-    return response.data;
+    const data = response.data;
+
+    // Handle different response formats from ABP framework
+    // ABP may return either an array directly or a wrapped object
+    if (Array.isArray(data)) {
+      return data;
+    }
+    // If it's a wrapped object, try common property names
+    if (data && Array.isArray(data.items)) {
+      return data.items;
+    }
+    if (data && Array.isArray(data.result)) {
+      return data.result;
+    }
+    // If still not an array, return empty array and log warning
+    console.warn('Unexpected response format from getUserRoles:', data);
+    return [];
   } catch (error) {
     if (axios.isAxiosError(error)) {
       const message =
@@ -468,10 +503,26 @@ export const updateUserRoles = async (
  */
 export const getAssignableRoles = async (): Promise<IdentityRoleDto[]> => {
   try {
-    const response = await http.get<IdentityRoleDto[]>(
+    const response = await http.get<any>(
       '/api/identity/users/assignable-roles'
     );
-    return response.data;
+    const data = response.data;
+
+    // Handle different response formats from ABP framework
+    // ABP may return either an array directly or a wrapped object
+    if (Array.isArray(data)) {
+      return data;
+    }
+    // If it's a wrapped object, try common property names
+    if (data && Array.isArray(data.items)) {
+      return data.items;
+    }
+    if (data && Array.isArray(data.result)) {
+      return data.result;
+    }
+    // If still not an array, return empty array and log warning
+    console.warn('Unexpected response format from getAssignableRoles:', data);
+    return [];
   } catch (error) {
     if (axios.isAxiosError(error)) {
       const message =
@@ -650,6 +701,8 @@ export const updatePermissions = async (
   input: UpdatePermissionsDto
 ): Promise<void> => {
   try {
+    // Note: This API returns 204 No Content on success, which is normal
+    // 204 means the request was successful but there's no response body
     await http.put(
       '/api/permission-management/permissions',
       input,
@@ -660,8 +713,15 @@ export const updatePermissions = async (
         },
       }
     );
+    // 204 No Content is a successful response, no need to check response.data
+    // The request completed successfully if we reach here
   } catch (error) {
     if (axios.isAxiosError(error)) {
+      // For 204 responses, error.response.data will be empty, so check status first
+      if (error.response?.status === 204) {
+        // 204 is actually success, not an error
+        return;
+      }
       const message =
         error.response?.data?.error?.message ||
         error.message ||

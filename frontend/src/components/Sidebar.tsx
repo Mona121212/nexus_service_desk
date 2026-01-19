@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { Link } from "react-router-dom";
 import { getMyMenus } from "../api/menus";
 import { Menu } from "../types/menu";
@@ -9,11 +9,7 @@ export const Sidebar: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    fetchMenus();
-  }, []);
-
-  const fetchMenus = async (): Promise<void> => {
+  const fetchMenus = useCallback(async (): Promise<void> => {
     setLoading(true);
     setError(null);
     
@@ -21,13 +17,31 @@ export const Sidebar: React.FC = () => {
       // All users (including Admin) use my-menus API to get their role-based menus
       // The my-menus API returns menus based on user's role-menu associations
       const data = await getMyMenus();
+      console.log('Sidebar: Menu data fetched:', data);
       setMenus(data);
       setLoading(false);
     } catch (err) {
       setLoading(false);
       setError(err instanceof Error ? err.message : 'Failed to fetch menus');
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    fetchMenus();
+
+    // Listen for menu update events (triggered when role menu configuration is saved)
+    const handleMenuUpdate = () => {
+      console.log('Sidebar: Menu update event received, refreshing menus...');
+      fetchMenus();
+    };
+
+    window.addEventListener('menusUpdated', handleMenuUpdate);
+
+    // Cleanup listener on unmount
+    return () => {
+      window.removeEventListener('menusUpdated', handleMenuUpdate);
+    };
+  }, [fetchMenus]);
 
   const renderMenuItems = (menuList: typeof menus) => {
     return menuList.map((menu) => (

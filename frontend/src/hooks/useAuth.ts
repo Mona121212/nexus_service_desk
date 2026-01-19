@@ -33,10 +33,15 @@ export const useAuth = () => {
     setError(null);
     
     try {
-      const token = await loginApi(username, password);
-      localStorage.setItem('access_token', token);
+      // Get new token first (loginApi will store it in localStorage)
+      await loginApi(username, password);
       
-      // Fetch permissions after successful login
+      // After successful login, clear old permissions cache to ensure fresh data
+      // The token is already stored by loginApi, so we just need to clear permissions
+      localStorage.removeItem('user_permissions');
+      setPermissions({});
+      
+      // Fetch fresh permissions after successful login
       // Don't block login if permission fetch fails
       try {
         await fetchPermissions();

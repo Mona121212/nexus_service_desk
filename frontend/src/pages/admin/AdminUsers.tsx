@@ -64,7 +64,34 @@ export const AdminUsers: React.FC = () => {
         maxResultCount: pagination.maxResultCount,
       };
       const result = await getUsers(input);
-      setUsers(result.items);
+      
+      // If roles are not included in the response, fetch them for each user
+      const usersWithRoles = await Promise.all(
+        result.items.map(async (user) => {
+          // If user already has roles array, use it
+          if (user.roles && Array.isArray(user.roles) && user.roles.length > 0) {
+            return user;
+          }
+          
+          // Otherwise, fetch roles for this user
+          try {
+            const roles = await getUserRoles(user.id);
+            return {
+              ...user,
+              roles: Array.isArray(roles) ? roles : [],
+            };
+          } catch (err) {
+            // If fetching roles fails, just return user without roles
+            console.warn(`Failed to fetch roles for user ${user.id}:`, err);
+            return {
+              ...user,
+              roles: [],
+            };
+          }
+        })
+      );
+      
+      setUsers(usersWithRoles);
       setTotalCount(result.totalCount);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to fetch users");
@@ -76,9 +103,10 @@ export const AdminUsers: React.FC = () => {
   const fetchAssignableRoles = async () => {
     try {
       const roles = await getAssignableRoles();
-      setAssignableRoles(roles);
+      setAssignableRoles(Array.isArray(roles) ? roles : []);
     } catch (err) {
       console.error("Failed to fetch assignable roles:", err);
+      setAssignableRoles([]);
     }
   };
 
@@ -145,7 +173,7 @@ export const AdminUsers: React.FC = () => {
     setSelectedUser(user);
     try {
       const roles = await getUserRoles(user.id);
-      setUserRoles(roles.map((r) => r.name));
+      setUserRoles(Array.isArray(roles) ? roles.map((r) => r.name) : []);
       setShowRoleModal(true);
     } catch (err) {
       setError(
@@ -192,7 +220,9 @@ export const AdminUsers: React.FC = () => {
       password: "", // Don't include password for update
       isActive: user.isActive,
       lockoutEnabled: user.lockoutEnabled,
-      roleNames: user.roles?.map((r) => r.name) || [],
+      roleNames: user.roles && Array.isArray(user.roles) 
+        ? user.roles.map((r) => r.name) 
+        : [],
     });
     setShowEditModal(true);
   };
@@ -241,7 +271,11 @@ export const AdminUsers: React.FC = () => {
                     <td>{user.email}</td>
                     <td>{user.phoneNumber || "-"}</td>
                     <td>{user.isActive ? "Yes" : "No"}</td>
-                    <td>{user.roles?.map((r) => r.name).join(", ") || "-"}</td>
+                    <td>
+                      {user.roles && Array.isArray(user.roles) && user.roles.length > 0
+                        ? user.roles.map((r) => r.name).join(", ")
+                        : "-"}
+                    </td>
                     <td>
                       <button
                         className="btn btn-sm btn-secondary"
@@ -512,24 +546,28 @@ export const AdminUsers: React.FC = () => {
             <div className="modal-content" onClick={(e) => e.stopPropagation()}>
               <h2>Manage Roles for {selectedUser.userName}</h2>
               <div className="role-checkboxes">
-                {assignableRoles.map((role) => (
-                  <label key={role.id} className="checkbox-label">
-                    <input
-                      type="checkbox"
-                      checked={userRoles.includes(role.name)}
-                      onChange={(e) => {
-                        if (e.target.checked) {
-                          setUserRoles([...userRoles, role.name]);
-                        } else {
-                          setUserRoles(
-                            userRoles.filter((r) => r !== role.name)
-                          );
-                        }
-                      }}
-                    />
-                    {role.name}
-                  </label>
-                ))}
+                {Array.isArray(assignableRoles) && assignableRoles.length > 0 ? (
+                  assignableRoles.map((role) => (
+                    <label key={role.id} className="checkbox-label">
+                      <input
+                        type="checkbox"
+                        checked={userRoles.includes(role.name)}
+                        onChange={(e) => {
+                          if (e.target.checked) {
+                            setUserRoles([...userRoles, role.name]);
+                          } else {
+                            setUserRoles(
+                              userRoles.filter((r) => r !== role.name)
+                            );
+                          }
+                        }}
+                      />
+                      {role.name}
+                    </label>
+                  ))
+                ) : (
+                  <div>No roles available</div>
+                )}
               </div>
               <div className="modal-actions">
                 <button className="btn btn-primary" onClick={handleUpdateRoles}>

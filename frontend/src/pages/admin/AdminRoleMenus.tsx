@@ -230,6 +230,10 @@ export const AdminRoleMenus: React.FC = () => {
       };
       await saveRoleMenus(input);
       alert('Role menu configuration saved successfully');
+      
+      // Trigger menu refresh event to update Sidebar
+      console.log('AdminRoleMenus: Dispatching menusUpdated event...');
+      window.dispatchEvent(new CustomEvent('menusUpdated'));
     } catch (err) {
       alert(err instanceof Error ? err.message : 'Failed to save role menus');
     } finally {

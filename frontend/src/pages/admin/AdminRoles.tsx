@@ -159,9 +159,33 @@ export const AdminRoles: React.FC = () => {
   const handleSavePermissions = async () => {
     if (!selectedRole) return;
     try {
-      const permissionsToUpdate: UpdatePermissionDto[] = Object.keys(permissions).map(name => ({
+      // Build permissions list from all permission groups to ensure we include all permissions
+      // This ensures that even if a permission is not in the initial permissions state,
+      // it will be included in the update if it exists in permissionGroups
+      const allPermissions: Record<string, boolean> = {};
+      
+      // First, add all permissions from permissionGroups with their current granted status
+      permissionGroups.forEach(group => {
+        group.permissions?.forEach(perm => {
+          // Use the value from permissions state if it exists (user may have changed it),
+          // otherwise use the original isGranted value from the API response
+          allPermissions[perm.name] = permissions[perm.name] !== undefined 
+            ? permissions[perm.name] 
+            : perm.isGranted;
+        });
+      });
+      
+      // Also include any permissions that were manually added to the permissions state
+      // (in case user selected a permission that's not in permissionGroups)
+      Object.keys(permissions).forEach(name => {
+        if (!allPermissions.hasOwnProperty(name)) {
+          allPermissions[name] = permissions[name];
+        }
+      });
+      
+      const permissionsToUpdate: UpdatePermissionDto[] = Object.keys(allPermissions).map(name => ({
         name,
-        isGranted: permissions[name],
+        isGranted: allPermissions[name],
       }));
 
       await updatePermissions('R', selectedRole.name, {
