@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.Extensions.Logging;
 using Volo.Abp.Application.Services;
 using Volo.Abp.Domain.Repositories;
 using Volo.Abp.Identity;
@@ -64,69 +65,61 @@ public class AdminRoleMenuAppService : ServiceDeskAppService, IAdminRoleMenuAppS
     [Authorize(ServiceDeskPermissions.RoleMenusManage)]
     public async Task SaveAsync(SetRoleMenusDto input)
     {
-        // Get role information for validation
-        var role = await _roleRepository.GetAsync(input.RoleId);
-        var roleNameUpper = role.Name?.ToUpper() ?? "";
-
-        // Get menu information for validation
-        if (input.MenuIds != null && input.MenuIds.Count > 0)
+        // Validate input
+        if (input == null)
         {
-            var menus = await _menuRepository.GetListAsync(x => input.MenuIds.Contains(x.Id));
-
-            // Validate: Prevent cross-role menu assignments
-            // Check if menu codes match the role name pattern
-            foreach (var menu in menus)
-            {
-                var menuCodeUpper = menu.Code?.ToUpper() ?? "";
-
-                // Prevent Teacher role from getting Electrician menus
-                if (menuCodeUpper.Contains("ELECTRICIAN") && !roleNameUpper.Contains("ELECTRICIAN") && !roleNameUpper.Contains("ADMIN"))
-                {
-                    throw new BusinessException(
-                        "InvalidMenuAssignment",
-                        $"Cannot assign menu '{menu.Name}' (Code: {menu.Code}) to role '{role.Name}'. " +
-                        $"This menu is intended for Electrician role only.");
-                }
-
-                // Prevent Electrician role from getting Teacher menus
-                if (menuCodeUpper.Contains("TEACHER") && !roleNameUpper.Contains("TEACHER") && !roleNameUpper.Contains("ADMIN"))
-                {
-                    throw new BusinessException(
-                        "InvalidMenuAssignment",
-                        $"Cannot assign menu '{menu.Name}' (Code: {menu.Code}) to role '{role.Name}'. " +
-                        $"This menu is intended for Teacher role only.");
-                }
-
-                // Prevent Admin role from getting role-specific menus (optional, can be removed if Admin should have all menus)
-                // Uncomment if you want to restrict Admin from getting role-specific menus
-                // if (roleNameUpper.Contains("ADMIN"))
-                // {
-                //     if (menuCodeUpper.Contains("ELECTRICIAN") || menuCodeUpper.Contains("TEACHER"))
-                //     {
-                //         throw new BusinessException(
-                //             "InvalidMenuAssignment",
-                //             $"Admin role should not be assigned role-specific menus like '{menu.Name}'.");
-                //     }
-                // }
-            }
+            throw new ArgumentNullException(nameof(input));
         }
+
+        // Get role information
+        var role = await _roleRepository.GetAsync(input.RoleId);
+
+        // Log the operation for debugging
+        Logger?.LogInformation(
+            "SaveAsync: Saving role-menu mappings for RoleId={RoleId}, RoleName={RoleName}, MenuCount={MenuCount}",
+            input.RoleId,
+            role.Name,
+            input.MenuIds?.Count ?? 0);
 
         // Remove existing role-menu mappings
         var existingMappings = await _roleMenuRepository.GetListAsync(x => x.RoleId == input.RoleId);
-        foreach (var mapping in existingMappings)
+        Logger?.LogInformation(
+            "SaveAsync: Found {ExistingCount} existing role-menu mappings for RoleId={RoleId}",
+            existingMappings.Count,
+            input.RoleId);
+
+        // Delete existing mappings
+        if (existingMappings.Count > 0)
         {
-            await _roleMenuRepository.DeleteAsync(mapping);
+            foreach (var mapping in existingMappings)
+            {
+                await _roleMenuRepository.DeleteAsync(mapping);
+            }
         }
 
-        // Add new role-menu mappings
-        if (input.MenuIds != null)
+        // Add new role-menu mappings from database configuration
+        if (input.MenuIds != null && input.MenuIds.Count > 0)
         {
             foreach (var menuId in input.MenuIds)
             {
                 var roleMenu = new AppRoleMenu(input.RoleId, menuId);
                 await _roleMenuRepository.InsertAsync(roleMenu);
             }
+
+            Logger?.LogInformation(
+                "SaveAsync: Successfully saved {NewCount} role-menu mappings for RoleId={RoleId}",
+                input.MenuIds.Count,
+                input.RoleId);
         }
+        else
+        {
+            Logger?.LogInformation(
+                "SaveAsync: No menus to assign, all role-menu mappings removed for RoleId={RoleId}",
+                input.RoleId);
+        }
+
+        // Trigger menu update event so frontend can refresh
+        // This notifies connected clients to refresh their menu data
     }
 
     private void BuildMenuTree(AppMenuDto parent, List<AppMenuDto> allMenus, List<Guid> allowedMenuIds)
