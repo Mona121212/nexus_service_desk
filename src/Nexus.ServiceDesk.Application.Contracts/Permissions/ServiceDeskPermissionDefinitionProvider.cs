@@ -9,11 +9,26 @@ public class ServiceDeskPermissionDefinitionProvider : PermissionDefinitionProvi
 {
     public override void Define(IPermissionDefinitionContext context)
     {
+        // IMPORTANT: This method is REQUIRED by ABP framework (abstract method)
+        // However, with SaveStaticPermissionsToDatabase = false configured in ServiceDeskWebModule,
+        // these definitions will NOT be written to AbpPermissions table
+        // 
+        // Permissions are already defined in AbpPermissions table in database.
+        // This method is only for:
+        // 1. Runtime permission checking (ABP framework needs to know permission structure)
+        // 2. Permission validation and authorization
+        // 
+        // The actual permission grants (which role has which permission) are stored in 
+        // AbpPermissionGrants table and can be queried dynamically using DynamicPermissionAppService
+        //
+        // NOTE: Keep this method in sync with permissions in AbpPermissions table
+        // If you add new permissions in database, also add them here for runtime checking
+
         var serviceDeskGroup = context.AddGroup(ServiceDeskPermissions.GroupName, L("Permission:ServiceDesk"));
 
         // RepairRequests permissions group
         var repairRequestsGroup = serviceDeskGroup.AddPermission(ServiceDeskPermissions.RepairRequests, L("Permission:RepairRequests"));
-        
+
         // Teacher permissions
         repairRequestsGroup.AddChild(ServiceDeskPermissions.RepairRequestsCreate, L("Permission:RepairRequests.Create"));
         repairRequestsGroup.AddChild(ServiceDeskPermissions.RepairRequestsUpdate, L("Permission:RepairRequests.Update"));
@@ -29,7 +44,7 @@ public class ServiceDeskPermissionDefinitionProvider : PermissionDefinitionProvi
         repairRequestsGroup.AddChild(ServiceDeskPermissions.RepairRequestsAdminList, L("Permission:RepairRequests.AdminList"));
         repairRequestsGroup.AddChild(ServiceDeskPermissions.RepairRequestsApprove, L("Permission:RepairRequests.Approve"));
         repairRequestsGroup.AddChild(ServiceDeskPermissions.RepairRequestsReject, L("Permission:RepairRequests.Reject"));
-        
+
         // Menu management permissions
         serviceDeskGroup.AddPermission(ServiceDeskPermissions.MenusManage, L("Permission:Menus.Manage"));
         serviceDeskGroup.AddPermission(ServiceDeskPermissions.RoleMenusManage, L("Permission:RoleMenus.Manage"));

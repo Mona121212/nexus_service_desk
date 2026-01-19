@@ -149,6 +149,9 @@ public class ServiceDeskWebModule : AbpModule
         Configure<PermissionManagementOptions>(options =>
         {
             options.IsDynamicPermissionStoreEnabled = true;
+            // Set to false to prevent overwriting permissions in AbpPermissions table
+            // Permissions are already defined in database, Define() method is only for runtime structure
+            options.SaveStaticPermissionsToDatabase = false;
         });
     }
 

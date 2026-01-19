@@ -35,14 +35,15 @@ public class MenuAppService : ServiceDeskAppService, IMenuAppService
             return new GetMyMenusDto { Menus = new List<AppMenuDto>() };
         }
 
-        // Get user roles
-        var user = await _userRepository.GetAsync(CurrentUser.Id.Value);
-        // Check if Roles is null or empty
-        if (user.Roles == null || !user.Roles.Any())
+        // Get user roles using GetRolesAsync method to ensure roles are properly loaded
+        var userRoles = await _userRepository.GetRolesAsync(CurrentUser.Id.Value);
+
+        if (userRoles == null || !userRoles.Any())
         {
             return new GetMyMenusDto { Menus = new List<AppMenuDto>() };
         }
-        var roleIds = user.Roles.Select(r => r.RoleId).ToList();
+
+        var roleIds = userRoles.Select(r => r.Id).ToList();
 
         if (roleIds.Count == 0)
         {
@@ -58,14 +59,60 @@ public class MenuAppService : ServiceDeskAppService, IMenuAppService
             return new GetMyMenusDto { Menus = new List<AppMenuDto>() };
         }
 
-        // Get enabled menus
+        // Get enabled menus that user has permission to access
         var menus = await _menuRepository.GetListAsync(x => menuIds.Contains(x.Id) && x.IsEnabled);
-        var menuDtos = menus.Select(m => _myMapper.Map(m)).ToList();
+
+        // If menus have parent menus, we need to include parent menus even if they are not directly assigned
+        // This ensures the menu tree structure is complete
+        // Recursively find all parent menus
+        var menuIdsWithParents = new HashSet<Guid>(menuIds);
+        var parentIdsToCheck = new HashSet<Guid>();
+
+        // First pass: collect all immediate parent IDs
+        foreach (var menu in menus)
+        {
+            if (menu.ParentId.HasValue && !menuIdsWithParents.Contains(menu.ParentId.Value))
+            {
+                parentIdsToCheck.Add(menu.ParentId.Value);
+            }
+        }
+
+        // Recursively find all parent menus up to the root
+        while (parentIdsToCheck.Count > 0)
+        {
+            var currentParentIds = parentIdsToCheck.ToList();
+            parentIdsToCheck.Clear();
+
+            var parentMenus = await _menuRepository.GetListAsync(x => currentParentIds.Contains(x.Id) && x.IsEnabled);
+            foreach (var parentMenu in parentMenus)
+            {
+                menuIdsWithParents.Add(parentMenu.Id);
+
+                // Check if this parent menu also has a parent
+                if (parentMenu.ParentId.HasValue && !menuIdsWithParents.Contains(parentMenu.ParentId.Value))
+                {
+                    parentIdsToCheck.Add(parentMenu.ParentId.Value);
+                }
+            }
+        }
+
+        // Fetch all menus including parent menus that are needed for tree structure
+        var allMenus = await _menuRepository.GetListAsync(x => menuIdsWithParents.Contains(x.Id) && x.IsEnabled);
+        var menuDtos = allMenus.Select(m => _myMapper.Map(m)).ToList();
 
         // Build tree structure
-        var rootMenus = menuDtos.Where(x => x.ParentId == null || !menuIds.Contains(x.ParentId.Value))
-            .OrderBy(x => x.SortOrder).ToList();
-        var childMenus = menuDtos.Where(x => x.ParentId != null && menuIds.Contains(x.ParentId.Value)).ToList();
+        // IMPORTANT: Only return menus that are directly assigned to user's roles (menuIds)
+        // Parent menus are included in menuIdsWithParents only for tree structure building,
+        // but we should NOT return parent menus as root menus unless they are also directly assigned
+        // Root menus are those that:
+        // 1. Are directly assigned to user's roles (in menuIds, not just menuIdsWithParents)
+        // 2. Have no parent OR their parent is not directly assigned to user's roles
+        var rootMenus = menuDtos
+            .Where(x => menuIds.Contains(x.Id) && (x.ParentId == null || !menuIds.Contains(x.ParentId.Value)))
+            .OrderBy(x => x.SortOrder)
+            .ToList();
+        // Child menus are those that are directly assigned AND have a parent that is also directly assigned
+        var childMenus = menuDtos.Where(x => menuIds.Contains(x.Id) && x.ParentId != null && menuIds.Contains(x.ParentId.Value)).ToList();
 
         foreach (var rootMenu in rootMenus)
         {
@@ -75,9 +122,13 @@ public class MenuAppService : ServiceDeskAppService, IMenuAppService
         return new GetMyMenusDto { Menus = rootMenus };
     }
 
-    private void BuildMenuTree(AppMenuDto parent, List<AppMenuDto> allMenus, List<Guid> allowedMenuIds)
+    private void BuildMenuTree(AppMenuDto parent, List<AppMenuDto> allMenus, ICollection<Guid> allowedMenuIds)
     {
-        var children = allMenus.Where(x => x.ParentId == parent.Id).OrderBy(x => x.SortOrder).ToList();
+        // Only include children that are in the allowed menu list (directly assigned to user's roles)
+        var children = allMenus
+            .Where(x => x.ParentId == parent.Id && allowedMenuIds.Contains(x.Id))
+            .OrderBy(x => x.SortOrder)
+            .ToList();
         parent.Children = children;
 
         foreach (var child in children)

@@ -10,7 +10,7 @@ using Nexus.ServiceDesk.Permissions;
 
 namespace Nexus.ServiceDesk.Identity;
 
-public class ServiceDeskIdentityDataSeedContributor : IDataSeedContributor, ITransientDependency
+public class ServiceDeskIdentityDataSeedContributor : ITransientDependency
 {
     private readonly IIdentityRoleRepository _roleRepository;
     private readonly IdentityRoleManager _roleManager;
@@ -30,58 +30,11 @@ public class ServiceDeskIdentityDataSeedContributor : IDataSeedContributor, ITra
     }
 
     [UnitOfWork]
-    public async Task SeedAsync(DataSeedContext context)
+    /*public async Task SeedAsync(DataSeedContext context)
     {
         await CreateRolesAndAssignPermissionsAsync();
-    }
-
-    private async Task CreateRolesAndAssignPermissionsAsync()
-    {
-        // Create Teacher role
-        var teacherRole = await CreateRoleIfNotExistsAsync("Teacher", "Teacher");
-        if (teacherRole != null)
-        {
-            await GrantPermissionsToRoleAsync(teacherRole.Name!, new[]
-            {
-                ServiceDeskPermissions.RepairRequestsCreate,
-                ServiceDeskPermissions.RepairRequestsUpdate,
-                ServiceDeskPermissions.RepairRequestsCancel,
-                ServiceDeskPermissions.RepairRequestsMyList,
-                ServiceDeskPermissions.RepairRequestsDetail
-            });
-        }
-
-        // Create Electrician role
-        var electricianRole = await CreateRoleIfNotExistsAsync("Electrician", "Electrician");
-        if (electricianRole != null)
-        {
-            await GrantPermissionsToRoleAsync(electricianRole.Name!, new[]
-            {
-                ServiceDeskPermissions.RepairRequestsQuote,
-                ServiceDeskPermissions.RepairRequestsElectricianList
-            });
-        }
-
-        // Create Admin role
-        var adminRole = await CreateRoleIfNotExistsAsync("Admin", "Admin");
-        if (adminRole != null)
-        {
-            await GrantPermissionsToRoleAsync(adminRole.Name!, new[]
-            {
-                // Repair Request Admin APIs
-                ServiceDeskPermissions.RepairRequestsAdminList,  // GET /api/app/admin-repair-request
-                ServiceDeskPermissions.RepairRequestsApprove,    // GET /api/app/admin-repair-request/approvals, POST /api/app/admin-repair-request/{id}/approve
-                ServiceDeskPermissions.RepairRequestsReject,    // POST /api/app/admin-repair-request/{id}/reject
-                
-                // Menu Management APIs
-                ServiceDeskPermissions.MenusManage,             // GET, POST, PUT, DELETE /api/app/admin-menu
-                
-                // Role Menu Assignment APIs
-                ServiceDeskPermissions.RoleMenusManage            // GET /api/app/admin-role-menu/by-role/{roleId}, POST /api/app/admin-role-menu/save
-            });
-        }
-    }
-
+    }*/
+    
     private async Task<IdentityRole?> CreateRoleIfNotExistsAsync(string roleName, string displayName)
     {
         var role = await _roleRepository.FindByNormalizedNameAsync(roleName.ToUpperInvariant());
@@ -98,11 +51,5 @@ public class ServiceDeskIdentityDataSeedContributor : IDataSeedContributor, ITra
         return role;
     }
 
-    private async Task GrantPermissionsToRoleAsync(string roleName, string[] permissionNames)
-    {
-        foreach (var permissionName in permissionNames)
-        {
-            await _permissionManager.SetForRoleAsync(roleName, permissionName, true);
-        }
-    }
+    
 }
