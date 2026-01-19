@@ -12,17 +12,17 @@ export const Sidebar: React.FC = () => {
   const fetchMenus = useCallback(async (): Promise<void> => {
     setLoading(true);
     setError(null);
-    
+
     try {
       // All users (including Admin) use my-menus API to get their role-based menus
       // The my-menus API returns menus based on user's role-menu associations
       const data = await getMyMenus();
-      console.log('Sidebar: Menu data fetched:', data);
+      console.log("Sidebar: Menu data fetched:", data);
       setMenus(data);
       setLoading(false);
     } catch (err) {
       setLoading(false);
-      setError(err instanceof Error ? err.message : 'Failed to fetch menus');
+      setError(err instanceof Error ? err.message : "Failed to fetch menus");
     }
   }, []);
 
@@ -31,15 +31,15 @@ export const Sidebar: React.FC = () => {
 
     // Listen for menu update events (triggered when role menu configuration is saved)
     const handleMenuUpdate = () => {
-      console.log('Sidebar: Menu update event received, refreshing menus...');
+      console.log("Sidebar: Menu update event received, refreshing menus...");
       fetchMenus();
     };
 
-    window.addEventListener('menusUpdated', handleMenuUpdate);
+    window.addEventListener("menusUpdated", handleMenuUpdate);
 
     // Cleanup listener on unmount
     return () => {
-      window.removeEventListener('menusUpdated', handleMenuUpdate);
+      window.removeEventListener("menusUpdated", handleMenuUpdate);
     };
   }, [fetchMenus]);
 
@@ -59,8 +59,8 @@ export const Sidebar: React.FC = () => {
 
   // Temporary hardcoded menu items until backend menu data is available
   const tempMenuItems = [
-    { id: '1', name: 'My Repairs', path: '/repairs' },
-    { id: '2', name: 'Create Repair', path: '/repairs/create' },
+    { id: "1", name: "My Repairs", path: "/repairs" },
+    { id: "2", name: "Create Repair", path: "/repairs/create" },
   ];
 
   return (
@@ -70,18 +70,43 @@ export const Sidebar: React.FC = () => {
         {error && <div className="menu-error">Error: {error}</div>}
         {!loading && !error && (
           <ul className="menu-list">
-            {menus.length > 0 ? (
-              renderMenuItems(menus)
-            ) : (
-              // Show temporary menu items if no backend menu data
-              tempMenuItems.map((item) => (
-                <li key={item.id}>
-                  <Link to={item.path} className="menu-item">
-                    <span className="menu-name">{item.name}</span>
-                  </Link>
-                </li>
-              ))
-            )}
+            {
+              menus.length > 0
+                ? renderMenuItems(menus)
+                : // 1.   先获取并解析权限数据
+                  (() => {
+                    const permsRaw = localStorage.getItem("user_permissions");
+                    let hasCreatePermission = false;
+
+                    try {
+                      if (permsRaw) {
+                        const perms = JSON.parse(permsRaw);
+                        // 2. 检查特定权限：注意使用方括号语法访问带点的键名
+                        hasCreatePermission =
+                          perms["ServiceDesk.RepairRequests.Create"] === true;
+                      }
+                    } catch (e) {
+                      console.error("解析权限失败", e);
+                    }
+                    //alert(`Create Permission: ${hasCreatePermission}`);
+                    // 3. 过滤并渲染菜单
+                    return tempMenuItems
+                      .filter((item) => {
+                        // 如果 id 是 '2'，则检查是否有权限；其他 id 默认显示
+                        if (item.id === "2") {
+                          return hasCreatePermission;
+                        }
+                        return true;
+                      })
+                      .map((item) => (
+                        <li key={item.id}>
+                          <Link to={item.path} className="menu-item">
+                            <span className="menu-name">{item.name}</span>
+                          </Link>
+                        </li>
+                      ));
+                  })() // 使用立即执行函数执行逻辑
+            }
           </ul>
         )}
       </nav>
