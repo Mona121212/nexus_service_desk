@@ -6,7 +6,7 @@ import "./Sidebar.css";
 
 export const Sidebar: React.FC = () => {
   const [menus, setMenus] = useState<Menu[]>([]);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   const fetchMenus = useCallback(async (): Promise<void> => {
@@ -14,22 +14,23 @@ export const Sidebar: React.FC = () => {
     setError(null);
 
     try {
-      // All users (including Admin) use my-menus API to get their role-based menus
-      // The my-menus API returns menus based on user's role-menu associations
+      // 直接从后端获取用户的权限菜单
+      // 后端会根据用户的角色过滤菜单
       const data = await getMyMenus();
       console.log("Sidebar: Menu data fetched:", data);
       setMenus(data);
-      setLoading(false);
     } catch (err) {
-      setLoading(false);
       setError(err instanceof Error ? err.message : "Failed to fetch menus");
+      console.error("Failed to fetch menus:", err);
+    } finally {
+      setLoading(false);
     }
   }, []);
 
   useEffect(() => {
     fetchMenus();
 
-    // Listen for menu update events (triggered when role menu configuration is saved)
+    // 监听菜单更新事件（当角色菜单配置被保存时触发）
     const handleMenuUpdate = () => {
       console.log("Sidebar: Menu update event received, refreshing menus...");
       fetchMenus();
@@ -37,16 +38,15 @@ export const Sidebar: React.FC = () => {
 
     window.addEventListener("menusUpdated", handleMenuUpdate);
 
-    // Cleanup listener on unmount
     return () => {
       window.removeEventListener("menusUpdated", handleMenuUpdate);
     };
   }, [fetchMenus]);
 
-  const renderMenuItems = (menuList: typeof menus) => {
+  const renderMenuItems = (menuList: Menu[]): React.ReactNode => {
     return menuList.map((menu) => (
       <li key={menu.id}>
-        <Link to={menu.path || "#"} className="menu-item">
+        <Link to={menu.path} className="menu-item">
           {menu.icon && <span className="menu-icon">{menu.icon}</span>}
           <span className="menu-name">{menu.name}</span>
         </Link>
@@ -57,56 +57,18 @@ export const Sidebar: React.FC = () => {
     ));
   };
 
-  // Temporary hardcoded menu items until backend menu data is available
-  const tempMenuItems = [
-    { id: "1", name: "My Repairs", path: "/repairs" },
-    { id: "2", name: "Create Repair", path: "/repairs/create" },
-  ];
-
   return (
     <aside className="sidebar">
       <nav>
-        {loading && <div className="menu-loading">Loading...</div>}
+        {loading && <div className="menu-loading">Loading menus...</div>}
         {error && <div className="menu-error">Error: {error}</div>}
         {!loading && !error && (
           <ul className="menu-list">
-            {
-              menus.length > 0
-                ? renderMenuItems(menus)
-                : // 1.   先获取并解析权限数据
-                  (() => {
-                    const permsRaw = localStorage.getItem("user_permissions");
-                    let hasCreatePermission = false;
-
-                    try {
-                      if (permsRaw) {
-                        const perms = JSON.parse(permsRaw);
-                        // 2. 检查特定权限：注意使用方括号语法访问带点的键名
-                        hasCreatePermission =
-                          perms["ServiceDesk.RepairRequests.Create"] === true;
-                      }
-                    } catch (e) {
-                      console.error("解析权限失败", e);
-                    }
-                    //alert(`Create Permission: ${hasCreatePermission}`);
-                    // 3. 过滤并渲染菜单
-                    return tempMenuItems
-                      .filter((item) => {
-                        // 如果 id 是 '2'，则检查是否有权限；其他 id 默认显示
-                        if (item.id === "2") {
-                          return hasCreatePermission;
-                        }
-                        return true;
-                      })
-                      .map((item) => (
-                        <li key={item.id}>
-                          <Link to={item.path} className="menu-item">
-                            <span className="menu-name">{item.name}</span>
-                          </Link>
-                        </li>
-                      ));
-                  })() // 使用立即执行函数执行逻辑
-            }
+            {menus.length > 0 ? (
+              renderMenuItems(menus)
+            ) : (
+              <li className="menu-empty">No menus available for your role</li>
+            )}
           </ul>
         )}
       </nav>
