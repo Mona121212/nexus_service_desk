@@ -1,15 +1,16 @@
-import React, { useState, useEffect } from 'react';
-import { Layout } from '../../components/Layout';
+import React, { useState, useEffect } from "react";
+import { Layout } from "../../components/Layout";
 import {
   getAllRoles,
   getAdminMenus,
   getRoleMenus,
   saveRoleMenus,
-} from '../../api/admin';
-import { Role, AppMenuDto, SetRoleMenusDto } from '../../types/admin';
-import { useAuth } from '../../hooks/useAuth';
-import { Permissions } from '../../constants/permissions';
-import './AdminRoleMenus.css';
+} from "../../api/admin";
+import { Role, AppMenuDto, SetRoleMenusDto } from "../../types/admin";
+import { useAuth } from "../../hooks/useAuth";
+import { Permissions } from "../../constants/permissions";
+import "./AdminRoleMenus.css";
+import { data } from "react-router-dom";
 
 interface MenuTreeNode extends AppMenuDto {
   checked?: boolean;
@@ -30,7 +31,7 @@ export const AdminRoleMenus: React.FC = () => {
   useEffect(() => {
     // Check permission
     if (!hasPermission(Permissions.RoleMenus.Manage)) {
-      setError('You do not have permission to access this page');
+      setError("You do not have permission to access this page");
       return;
     }
     fetchRoles();
@@ -50,7 +51,7 @@ export const AdminRoleMenus: React.FC = () => {
     try {
       const data = await getAllRoles();
       // Ensure data is an array before filtering
-      if (!Array.isArray(data)) {
+      /*if (!Array.isArray(data)) {
         console.error('getAllRoles returned non-array data:', data);
         setError('Invalid response format: expected array');
         setRoles([]);
@@ -62,10 +63,10 @@ export const AdminRoleMenus: React.FC = () => {
           role.name === 'Teacher' ||
           role.name === 'Electrician' ||
           role.name === 'Admin'
-      );
-      setRoles(filteredRoles);
+      );*/
+      setRoles(data);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to fetch roles');
+      setError(err instanceof Error ? err.message : "Failed to fetch roles");
     }
   };
 
@@ -77,7 +78,7 @@ export const AdminRoleMenus: React.FC = () => {
         buildMenuTree(data, []);
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to fetch menus');
+      setError(err instanceof Error ? err.message : "Failed to fetch menus");
     }
   };
 
@@ -88,7 +89,9 @@ export const AdminRoleMenus: React.FC = () => {
       const roleMenuIds = roleMenuData.map((menu) => menu.id);
       buildMenuTree(allMenus, roleMenuIds);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to fetch role menus');
+      setError(
+        err instanceof Error ? err.message : "Failed to fetch role menus",
+      );
     } finally {
       setLoading(false);
     }
@@ -143,9 +146,11 @@ export const AdminRoleMenus: React.FC = () => {
     nodes.forEach((node) => {
       if (node.children && node.children.length > 0) {
         updateIndeterminateStates(node.children);
-        const checkedCount = node.children.filter((child) => child.checked).length;
+        const checkedCount = node.children.filter(
+          (child) => child.checked,
+        ).length;
         const indeterminateCount = node.children.filter(
-          (child) => child.indeterminate
+          (child) => child.indeterminate,
         ).length;
 
         if (checkedCount === node.children.length) {
@@ -217,7 +222,7 @@ export const AdminRoleMenus: React.FC = () => {
 
   const handleSave = async () => {
     if (!selectedRoleId) {
-      alert('Please select a role first');
+      alert("Please select a role first");
       return;
     }
 
@@ -229,13 +234,13 @@ export const AdminRoleMenus: React.FC = () => {
         menuIds: checkedMenuIds,
       };
       await saveRoleMenus(input);
-      alert('Role menu configuration saved successfully');
-      
+      alert("Role menu configuration saved successfully");
+
       // Trigger menu refresh event to update Sidebar
-      console.log('AdminRoleMenus: Dispatching menusUpdated event...');
-      window.dispatchEvent(new CustomEvent('menusUpdated'));
+      console.log("AdminRoleMenus: Dispatching menusUpdated event...");
+      window.dispatchEvent(new CustomEvent("menusUpdated"));
     } catch (err) {
-      alert(err instanceof Error ? err.message : 'Failed to save role menus');
+      alert(err instanceof Error ? err.message : "Failed to save role menus");
     } finally {
       setSaving(false);
     }
@@ -243,21 +248,24 @@ export const AdminRoleMenus: React.FC = () => {
 
   const renderMenuTree = (nodes: MenuTreeNode[], level: number = 0) => {
     return (
-      <ul className={`menu-tree ${level === 0 ? 'menu-tree-root' : ''}`}>
+      <ul className={`menu-tree ${level === 0 ? "menu-tree-root" : ""}`}>
         {nodes.map((node) => (
           <li key={node.id} className="menu-tree-item">
-            <label className="menu-tree-label" style={{ paddingLeft: `${level * 20}px` }}>
+            <label
+              className="menu-tree-label"
+              style={{ paddingLeft: `${level * 20}px` }}
+            >
               <input
                 type="checkbox"
                 checked={node.checked || false}
-                onChange={(e) => handleCheckboxChange(node.id, e.target.checked)}
+                onChange={(e) =>
+                  handleCheckboxChange(node.id, e.target.checked)
+                }
               />
-              <span className={node.indeterminate ? 'indeterminate' : ''}>
+              <span className={node.indeterminate ? "indeterminate" : ""}>
                 {node.name}
               </span>
-              {node.path && (
-                <span className="menu-path">({node.path})</span>
-              )}
+              {node.path && <span className="menu-path">({node.path})</span>}
             </label>
             {node.children && node.children.length > 0 && (
               <>{renderMenuTree(node.children, level + 1)}</>
@@ -272,7 +280,9 @@ export const AdminRoleMenus: React.FC = () => {
     return (
       <Layout>
         <div className="admin-role-menus">
-          <div className="error">You do not have permission to access this page</div>
+          <div className="error">
+            You do not have permission to access this page
+          </div>
         </div>
       </Layout>
     );
@@ -282,20 +292,20 @@ export const AdminRoleMenus: React.FC = () => {
     <Layout>
       <div className="admin-role-menus">
         <div className="admin-role-menus-header">
-          <h1>角色权限分配</h1>
+          <h1>Role Menu Configuration</h1>
         </div>
 
         {error && <div className="error">Error: {error}</div>}
 
         <div className="admin-role-menus-content">
           <div className="role-list-panel">
-            <h2>角色列表</h2>
+            <h2>Role List</h2>
             <ul className="role-list">
               {roles.map((role) => (
                 <li
                   key={role.id}
                   className={`role-item ${
-                    selectedRoleId === role.id ? 'selected' : ''
+                    selectedRoleId === role.id ? "selected" : ""
                   }`}
                   onClick={() => setSelectedRoleId(role.id)}
                 >
@@ -306,7 +316,7 @@ export const AdminRoleMenus: React.FC = () => {
           </div>
 
           <div className="menu-tree-panel">
-            <h2>菜单树</h2>
+            <h2>Menu Tree</h2>
             {!selectedRoleId ? (
               <div className="empty-state">Please select a role</div>
             ) : loading ? (
@@ -329,7 +339,7 @@ export const AdminRoleMenus: React.FC = () => {
             onClick={handleSave}
             disabled={!selectedRoleId || saving}
           >
-            {saving ? '保存中...' : '保存配置'}
+            {saving ? "Saving..." : "Save Configuration"}
           </button>
         </div>
       </div>
