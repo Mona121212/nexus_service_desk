@@ -150,7 +150,7 @@ export const RepairList: React.FC = () => {
                                     Edit
                                   </button>
                                   <button
-                                    className="btn-link btn-danger"
+                                    className="btn-danger"
                                     onClick={() => handleCancel(repair.id)}
                                   >
                                     Cancel

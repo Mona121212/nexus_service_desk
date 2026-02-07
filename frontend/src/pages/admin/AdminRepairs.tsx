@@ -92,7 +92,7 @@ export const AdminRepairs: React.FC = () => {
     <Layout>
       <div className="admin-repairs">
         <div className="admin-repairs-header">
-          <h1>全部报修</h1>
+          <h1>All Repairs</h1>
         </div>
 
         {loading && <div className="loading">Loading...</div>}
@@ -108,12 +108,12 @@ export const AdminRepairs: React.FC = () => {
                   <thead>
                     <tr>
                       <th>ID</th>
-                      <th>标题</th>
-                      <th>申请人</th>
-                      <th>报价</th>
-                      <th>状态</th>
-                      <th>创建时间</th>
-                      <th>操作</th>
+                      <th>Title</th>
+                      <th>Applicant</th>
+                      <th>Quote</th>
+                      <th>Status</th>
+                      <th>Created Time</th>
+                      <th>Actions</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -146,7 +146,7 @@ export const AdminRepairs: React.FC = () => {
                             className="btn-link"
                             onClick={() => navigate(`/repairs/${repair.id}`)}
                           >
-                            查看详情
+                            View Details
                           </button>
                         </td>
                       </tr>
@@ -161,10 +161,10 @@ export const AdminRepairs: React.FC = () => {
                       onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
                       disabled={currentPage === 1}
                     >
-                      上一页
+                      Previous
                     </button>
                     <span className="pagination-info">
-                      第 {currentPage} 页，共 {totalPages} 页（总计 {totalCount} 条）
+                      Page {currentPage} of {totalPages} (Total {totalCount} items)
                     </span>
                     <button
                       className="btn-secondary"
@@ -173,7 +173,7 @@ export const AdminRepairs: React.FC = () => {
                       }
                       disabled={currentPage === totalPages}
                     >
-                      下一页
+                      Next
                     </button>
                   </div>
                 )}

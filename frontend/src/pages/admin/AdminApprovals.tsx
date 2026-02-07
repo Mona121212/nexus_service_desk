@@ -146,7 +146,7 @@ export const AdminApprovals: React.FC = () => {
     <Layout>
       <div className="admin-approvals">
         <div className="admin-approvals-header">
-          <h1>待审批</h1>
+          <h1>Pending Approvals</h1>
         </div>
 
         {loading && <div className="loading">Loading...</div>}
@@ -161,11 +161,11 @@ export const AdminApprovals: React.FC = () => {
                 <thead>
                   <tr>
                     <th>ID</th>
-                    <th>标题</th>
-                    <th>申请人</th>
-                    <th>报价</th>
-                    <th>状态</th>
-                    <th>操作</th>
+                    <th>Title</th>
+                    <th>Applicant</th>
+                    <th>Quote</th>
+                    <th>Status</th>
+                    <th>Actions</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -195,18 +195,18 @@ export const AdminApprovals: React.FC = () => {
                       <td>
                         <div className="action-buttons">
                           <button
-                            className="btn-link btn-success"
+                            className="btn-success"
                             onClick={() => handleApproveClick(repair)}
                             disabled={processing}
                           >
-                            批准
+                            Approve
                           </button>
                           <button
-                            className="btn-link btn-danger"
+                            className="btn-danger"
                             onClick={() => handleRejectClick(repair)}
                             disabled={processing}
                           >
-                            拒绝
+                            Reject
                           </button>
                         </div>
                       </td>
@@ -222,18 +222,18 @@ export const AdminApprovals: React.FC = () => {
         {showApproveModal && selectedRepair && (
           <div className="modal-overlay" onClick={() => !processing && setShowApproveModal(false)}>
             <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-              <h2>批准报修请求</h2>
+              <h2>Approve Repair Request</h2>
               <p>
-                <strong>标题:</strong> {selectedRepair.title}
+                <strong>Title:</strong> {selectedRepair.title}
               </p>
               <div className="modal-form-group">
-                <label htmlFor="approval-note">审批意见 (可选):</label>
+                <label htmlFor="approval-note">Approval Note (Optional):</label>
                 <textarea
                   id="approval-note"
                   value={approvalNote}
                   onChange={(e) => setApprovalNote(e.target.value)}
                   rows={4}
-                  placeholder="请输入审批意见..."
+                  placeholder="Enter approval note..."
                 />
               </div>
               <div className="modal-actions">
@@ -242,7 +242,7 @@ export const AdminApprovals: React.FC = () => {
                   onClick={handleApprove}
                   disabled={processing}
                 >
-                  {processing ? '处理中...' : '确认批准'}
+                  {processing ? 'Processing...' : 'Confirm Approve'}
                 </button>
                 <button
                   className="btn-secondary"
@@ -252,7 +252,7 @@ export const AdminApprovals: React.FC = () => {
                   }}
                   disabled={processing}
                 >
-                  取消
+                  Cancel
                 </button>
               </div>
             </div>
@@ -263,20 +263,20 @@ export const AdminApprovals: React.FC = () => {
         {showRejectModal && selectedRepair && (
           <div className="modal-overlay" onClick={() => !processing && setShowRejectModal(false)}>
             <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-              <h2>拒绝报修请求</h2>
+              <h2>Reject Repair Request</h2>
               <p>
-                <strong>标题:</strong> {selectedRepair.title}
+                <strong>Title:</strong> {selectedRepair.title}
               </p>
               <div className="modal-form-group">
                 <label htmlFor="reject-note">
-                  拒绝原因 <span className="required">*</span>:
+                  Rejection Reason <span className="required">*</span>:
                 </label>
                 <textarea
                   id="reject-note"
                   value={rejectNote}
                   onChange={(e) => setRejectNote(e.target.value)}
                   rows={4}
-                  placeholder="请输入拒绝原因..."
+                  placeholder="Enter rejection reason..."
                   required
                 />
               </div>
@@ -286,7 +286,7 @@ export const AdminApprovals: React.FC = () => {
                   onClick={handleReject}
                   disabled={processing || !rejectNote.trim()}
                 >
-                  {processing ? '处理中...' : '确认拒绝'}
+                  {processing ? 'Processing...' : 'Confirm Reject'}
                 </button>
                 <button
                   className="btn-secondary"
@@ -296,7 +296,7 @@ export const AdminApprovals: React.FC = () => {
                   }}
                   disabled={processing}
                 >
-                  取消
+                  Cancel
                 </button>
               </div>
             </div>

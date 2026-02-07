@@ -164,9 +164,9 @@ export const AdminMenus: React.FC = () => {
     <Layout>
       <div className="admin-menus">
         <div className="admin-menus-header">
-          <h1>菜单管理</h1>
+          <h1>Menu Management</h1>
           <button className="btn-primary" onClick={handleCreateClick}>
-            +添加菜单
+            + Add Menu
           </button>
         </div>
 
@@ -182,11 +182,11 @@ export const AdminMenus: React.FC = () => {
                 <thead>
                   <tr>
                     <th>ID</th>
-                    <th>菜单名</th>
-                    <th>路径</th>
-                    <th>排序</th>
-                    <th>启用</th>
-                    <th>操作</th>
+                    <th>Menu Name</th>
+                    <th>Path</th>
+                    <th>Sort Order</th>
+                    <th>Enabled</th>
+                    <th>Actions</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -202,7 +202,7 @@ export const AdminMenus: React.FC = () => {
                             menu.isEnabled ? 'status-enabled' : 'status-disabled'
                           }`}
                         >
-                          {menu.isEnabled ? '是' : '否'}
+                          {menu.isEnabled ? 'Yes' : 'No'}
                         </span>
                       </td>
                       <td>
@@ -211,13 +211,13 @@ export const AdminMenus: React.FC = () => {
                             className="btn-link"
                             onClick={() => handleEditClick(menu)}
                           >
-                            编辑
+                            Edit
                           </button>
                           <button
-                            className="btn-link btn-danger"
+                            className="btn-danger"
                             onClick={() => handleDeleteClick(menu.id)}
                           >
-                            删除
+                            Delete
                           </button>
                         </div>
                       </td>
@@ -236,11 +236,11 @@ export const AdminMenus: React.FC = () => {
             onClick={() => !processing && setShowCreateModal(false)}
           >
             <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-              <h2>添加菜单</h2>
+              <h2>Add Menu</h2>
               <div className="modal-form">
                 <div className="modal-form-group">
                   <label htmlFor="create-code">
-                    代码 <span className="required">*</span>:
+                    Code <span className="required">*</span>:
                   </label>
                   <input
                     id="create-code"
@@ -249,13 +249,13 @@ export const AdminMenus: React.FC = () => {
                     onChange={(e) =>
                       setFormData({ ...formData, code: e.target.value })
                     }
-                    placeholder="请输入菜单代码"
+                    placeholder="Enter menu code"
                     required
                   />
                 </div>
                 <div className="modal-form-group">
                   <label htmlFor="create-name">
-                    菜单名 <span className="required">*</span>:
+                    Menu Name <span className="required">*</span>:
                   </label>
                   <input
                     id="create-name"
@@ -264,12 +264,12 @@ export const AdminMenus: React.FC = () => {
                     onChange={(e) =>
                       setFormData({ ...formData, name: e.target.value })
                     }
-                    placeholder="请输入菜单名"
+                    placeholder="Enter menu name"
                     required
                   />
                 </div>
                 <div className="modal-form-group">
-                  <label htmlFor="create-path">路径:</label>
+                  <label htmlFor="create-path">Path:</label>
                   <input
                     id="create-path"
                     type="text"
@@ -277,11 +277,11 @@ export const AdminMenus: React.FC = () => {
                     onChange={(e) =>
                       setFormData({ ...formData, path: e.target.value })
                     }
-                    placeholder="请输入路径"
+                    placeholder="Enter path"
                   />
                 </div>
                 <div className="modal-form-group">
-                  <label htmlFor="create-icon">图标:</label>
+                  <label htmlFor="create-icon">Icon:</label>
                   <input
                     id="create-icon"
                     type="text"
@@ -289,11 +289,11 @@ export const AdminMenus: React.FC = () => {
                     onChange={(e) =>
                       setFormData({ ...formData, icon: e.target.value })
                     }
-                    placeholder="请输入图标"
+                    placeholder="Enter icon"
                   />
                 </div>
                 <div className="modal-form-group">
-                  <label htmlFor="create-sort">排序:</label>
+                  <label htmlFor="create-sort">Sort Order:</label>
                   <input
                     id="create-sort"
                     type="number"
@@ -315,7 +315,7 @@ export const AdminMenus: React.FC = () => {
                         setFormData({ ...formData, isEnabled: e.target.checked })
                       }
                     />
-                    启用
+                    Enabled
                   </label>
                 </div>
               </div>
@@ -325,14 +325,14 @@ export const AdminMenus: React.FC = () => {
                   onClick={handleCreate}
                   disabled={processing}
                 >
-                  {processing ? '处理中...' : '创建'}
+                  {processing ? 'Processing...' : 'Create'}
                 </button>
                 <button
                   className="btn-secondary"
                   onClick={() => setShowCreateModal(false)}
                   disabled={processing}
                 >
-                  取消
+                  Cancel
                 </button>
               </div>
             </div>
@@ -346,11 +346,11 @@ export const AdminMenus: React.FC = () => {
             onClick={() => !processing && setShowEditModal(false)}
           >
             <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-              <h2>编辑菜单</h2>
+              <h2>Edit Menu</h2>
               <div className="modal-form">
                 <div className="modal-form-group">
                   <label htmlFor="edit-name">
-                    菜单名 <span className="required">*</span>:
+                    Menu Name <span className="required">*</span>:
                   </label>
                   <input
                     id="edit-name"
@@ -359,12 +359,12 @@ export const AdminMenus: React.FC = () => {
                     onChange={(e) =>
                       setFormData({ ...formData, name: e.target.value })
                     }
-                    placeholder="请输入菜单名"
+                    placeholder="Enter menu name"
                     required
                   />
                 </div>
                 <div className="modal-form-group">
-                  <label htmlFor="edit-path">路径:</label>
+                  <label htmlFor="edit-path">Path:</label>
                   <input
                     id="edit-path"
                     type="text"
@@ -372,11 +372,11 @@ export const AdminMenus: React.FC = () => {
                     onChange={(e) =>
                       setFormData({ ...formData, path: e.target.value })
                     }
-                    placeholder="请输入路径"
+                    placeholder="Enter path"
                   />
                 </div>
                 <div className="modal-form-group">
-                  <label htmlFor="edit-icon">图标:</label>
+                  <label htmlFor="edit-icon">Icon:</label>
                   <input
                     id="edit-icon"
                     type="text"
@@ -384,11 +384,11 @@ export const AdminMenus: React.FC = () => {
                     onChange={(e) =>
                       setFormData({ ...formData, icon: e.target.value })
                     }
-                    placeholder="请输入图标"
+                    placeholder="Enter icon"
                   />
                 </div>
                 <div className="modal-form-group">
-                  <label htmlFor="edit-sort">排序:</label>
+                  <label htmlFor="edit-sort">Sort Order:</label>
                   <input
                     id="edit-sort"
                     type="number"
@@ -410,7 +410,7 @@ export const AdminMenus: React.FC = () => {
                         setFormData({ ...formData, isEnabled: e.target.checked })
                       }
                     />
-                    启用
+                    Enabled
                   </label>
                 </div>
               </div>
@@ -420,7 +420,7 @@ export const AdminMenus: React.FC = () => {
                   onClick={handleUpdate}
                   disabled={processing}
                 >
-                  {processing ? '处理中...' : '保存'}
+                  {processing ? 'Processing...' : 'Save'}
                 </button>
                 <button
                   className="btn-secondary"
@@ -430,7 +430,7 @@ export const AdminMenus: React.FC = () => {
                   }}
                   disabled={processing}
                 >
-                  取消
+                  Cancel
                 </button>
               </div>
             </div>

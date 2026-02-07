@@ -11,7 +11,7 @@
 
 .admin-approvals-header h1 {
   margin: 0;
-  font-size: 24px;
+  font-size: 32px;
   font-weight: 600;
 }
 
@@ -29,17 +29,17 @@
 }
 
 .admin-table th {
-  padding: 12px 16px;
+  padding: 14px 18px;
   text-align: left;
   font-weight: 600;
-  font-size: 14px;
+  font-size: 16px;
   color: #333;
 }
 
 .admin-table td {
-  padding: 12px 16px;
+  padding: 14px 18px;
   border-top: 1px solid #e0e0e0;
-  font-size: 14px;
+  font-size: 16px;
 }
 
 .admin-table tbody tr:hover {
@@ -48,9 +48,9 @@
 
 .status-badge {
   display: inline-block;
-  padding: 4px 8px;
+  padding: 6px 10px;
   border-radius: 4px;
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 500;
 }
 
@@ -75,12 +75,12 @@
 }
 
 .btn-link {
-  padding: 4px 8px;
+  padding: 6px 10px;
   background: none;
   border: none;
   color: #1976d2;
   cursor: pointer;
-  font-size: 14px;
+  font-size: 16px;
   text-decoration: underline;
 }
 
@@ -94,19 +94,45 @@
 }
 
 .btn-success {
-  color: #2e7d32;
+  padding: 6px 12px;
+  background-color: #2e7d32;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.2s;
 }
 
-.btn-success:hover {
-  color: #1b5e20;
+.btn-success:hover:not(:disabled) {
+  background-color: #1b5e20;
+  color: white;
+}
+
+.btn-success:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 .btn-danger {
-  color: #d32f2f;
+  padding: 6px 12px;
+  background-color: #d32f2f;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.2s;
 }
 
-.btn-danger:hover {
-  color: #c62828;
+.btn-danger:hover:not(:disabled) {
+  background-color: #c62828;
+  color: white;
+}
+
+.btn-danger:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 .loading,
@@ -125,7 +151,7 @@
   padding: 48px;
   text-align: center;
   color: #666;
-  font-size: 16px;
+  font-size: 18px;
 }
 
 /* Modal Styles */
@@ -154,13 +180,13 @@
 
 .modal-content h2 {
   margin: 0 0 16px 0;
-  font-size: 20px;
+  font-size: 24px;
   font-weight: 600;
 }
 
 .modal-content p {
   margin: 0 0 16px 0;
-  font-size: 14px;
+  font-size: 16px;
 }
 
 .modal-form-group {
@@ -170,7 +196,7 @@
 .modal-form-group label {
   display: block;
   margin-bottom: 8px;
-  font-size: 14px;
+  font-size: 16px;
   font-weight: 500;
   color: #333;
 }
@@ -181,10 +207,10 @@
 
 .modal-form-group textarea {
   width: 100%;
-  padding: 8px;
+  padding: 10px;
   border: 1px solid #ddd;
   border-radius: 4px;
-  font-size: 14px;
+  font-size: 16px;
   font-family: inherit;
   resize: vertical;
   box-sizing: border-box;
@@ -202,13 +228,13 @@
 }
 
 .btn-primary {
-  padding: 10px 20px;
+  padding: 12px 22px;
   background-color: #1976d2;
   color: white;
   border: none;
   border-radius: 4px;
   cursor: pointer;
-  font-size: 14px;
+  font-size: 16px;
   transition: background-color 0.2s;
 }
 
@@ -223,20 +249,22 @@
 
 .btn-primary.btn-danger {
   background-color: #d32f2f;
+  color: white;
 }
 
 .btn-primary.btn-danger:hover:not(:disabled) {
   background-color: #c62828;
+  color: white;
 }
 
 .btn-secondary {
-  padding: 10px 20px;
+  padding: 12px 22px;
   background-color: #f5f5f5;
   color: #333;
   border: 1px solid #ddd;
   border-radius: 4px;
   cursor: pointer;
-  font-size: 14px;
+  font-size: 16px;
   transition: background-color 0.2s;
 }
 

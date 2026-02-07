@@ -193,6 +193,9 @@ export const AdminRoles: React.FC = () => {
       });
       
       alert('Permissions updated successfully');
+      setShowPermissionModal(false);
+      setSelectedRole(null);
+      setPermissionFilter('');
       await fetchRolePermissions(selectedRole.name);
     } catch (err) {
       alert(err instanceof Error ? err.message : 'Failed to update permissions');
